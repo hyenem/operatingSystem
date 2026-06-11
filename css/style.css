@@ -1195,3 +1195,53 @@ body::before {
   .info__title { font-size: 22px; }
   .wordmark__sub { display: none; }
 }
+
+/* ── 2편: 동시성 랩 (race/lock/deadlock) ─────────────────── */
+.cc-view {
+  display: grid; gap: 8px; padding: 14px;
+  border: 1px solid var(--line-2); border-radius: 6px;
+  background: var(--bg); margin-bottom: 12px;
+}
+.cc-row { display: flex; align-items: center; gap: 12px; }
+.cc-name { font-family: var(--mono); font-size: 11px; width: 26px; flex-shrink: 0; }
+.cc-st {
+  font-family: var(--mono); font-size: 11.5px; color: var(--ink);
+  border: 1px solid var(--line-2); border-radius: var(--r);
+  padding: 7px 11px; flex: 1; min-height: 16px;
+}
+.cc-mem {
+  text-align: center; font-family: var(--mono); font-size: 13px; color: var(--dim);
+  border: 1px dashed var(--cyan-dk); border-radius: var(--r); padding: 8px;
+}
+.cc-mem b { font-size: 17px; color: var(--ink); }
+.cc-btn { width: 100%; }
+.st-next {
+  font-family: var(--mono); font-size: 12px; color: var(--ink);
+  background: var(--bg); border: 1px solid var(--cyan-dk); border-radius: var(--r);
+  padding: 8px 14px; cursor: pointer; transition: all .15s;
+}
+.st-next:hover:not(:disabled) { background: rgba(86,214,207,.1); color: var(--cyan); }
+.st-next:disabled { opacity: .4; cursor: not-allowed; }
+.dl-locks { display: flex; gap: 10px; justify-content: center; }
+.dl-lock {
+  font-family: var(--mono); font-size: 10.5px; color: var(--dim);
+  border: 1px dashed var(--line-2); border-radius: var(--r); padding: 7px 12px;
+}
+.dl-lock b { color: var(--ink); }
+
+/* strace 랩 */
+.st-zone { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.st-zone__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line-2); transition: all .2s; }
+.st-zone__name { font-family: var(--mono); font-size: 10.5px; color: var(--dim); }
+.st-steps {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 5px;
+  margin-bottom: 12px;
+}
+.st-step {
+  font-family: var(--mono); font-size: 9.5px; color: var(--dim);
+  border: 1px solid var(--line-2); border-radius: 20px; padding: 5px 10px;
+  transition: all .2s;
+}
+.st-step--on { color: var(--gold); border-color: var(--gold); background: rgba(176,138,224,.1); }
+.st-step--done { color: var(--green); border-color: #3f7a52; opacity: .65; }
+.st-sep { color: var(--faint); font-size: 9px; }

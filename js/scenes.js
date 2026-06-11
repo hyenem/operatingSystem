@@ -107,11 +107,106 @@
         ${thread(116, y, 290, col)}
         <rect x="430" y="${y-16}" width="88" height="32" rx="3" fill="${C.pan}" stroke="${col}" opacity=".8"/>
         <text x="474" y="${y+4}" text-anchor="middle" font-family="monospace" font-size="8" fill="${col}">자기 스택·레지스터</text>`).join('')}
-      <rect x="60" y="300" width="480" height="56" rx="6" fill="#16301f" stroke="${C.grn}"/>
-      <text x="300" y="324" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.grn}">공유: 힙 · 전역 변수 · 열린 파일</text>
-      <text x="300" y="344" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.warn}">⚠ 두 실이 동시에 만지면 — 경쟁 상태(race)</text>
+      ${hot('race', '공유 영역 — 위험 지대',
+        `<rect class="hot__shape" x="60" y="300" width="480" height="56" rx="6" fill="#16301f" stroke="${C.grn}"/>
+         <text x="300" y="324" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.grn}">공유: 힙 · 전역 변수 · 열린 파일</text>
+         <text x="300" y="344" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.warn}">⚠ 두 실이 동시에 만지면 — 경쟁 상태(race)</text>`,
+        300, 384, 'middle')}
       ${[120,170,220].map(y => `<path d="M380 ${y} Q400 ${(y+300)/2} 300 300" fill="none" stroke="${C.ln2}" stroke-width="1" opacity=".5"/>`).join('')}
-      <text x="300" y="396" text-anchor="middle" class="s-label" fill="${C.fnt}">실은 따로, 우주는 함께 — 빠르지만 조심스러운 동거</text>
+    `),
+
+    /* ─── D1.2 경쟁 상태: 증발의 타임라인 ─── */
+    race: svg(`
+      ${lbl(40, 40, 'RACE CONDITION · count++가 증발하는 순간')}
+      <rect x="230" y="58" width="140" height="44" rx="6" fill="${C.pan2}" stroke="${C.grn}"/>
+      <text x="300" y="86" text-anchor="middle" font-family="monospace" font-size="11" fill="${C.grn}">count = 5</text>
+      <text x="120" y="132" font-family="monospace" font-size="9.5" fill="${C.cyan}">T1</text>
+      <text x="120" y="262" font-family="monospace" font-size="9.5" fill="${C.vio}">T2</text>
+      <path d="M110 140 H540 M110 270 H540" stroke="${C.ln}" stroke-width="1"/>
+      ${[['읽기 5', 150, 140, C.cyan], ['+1 → 6', 290, 140, C.cyan], ['쓰기 6', 430, 140, C.cyan]].map(([t, x, y, col]) => `
+        <rect x="${x}" y="${y - 16}" width="96" height="32" rx="4" fill="${C.pan2}" stroke="${col}"/>
+        <text x="${x + 48}" y="${y + 5}" text-anchor="middle" font-family="monospace" font-size="9" fill="${col}">${t}</text>`).join('')}
+      ${[['읽기 5', 218, 270, C.vio], ['+1 → 6', 322, 270, C.vio], ['쓰기 6', 426, 270, C.vio]].map(([t, x, y, col]) => `
+        <rect x="${x}" y="${y - 16}" width="96" height="32" rx="4" fill="${C.pan2}" stroke="${col}"/>
+        <text x="${x + 48}" y="${y + 5}" text-anchor="middle" font-family="monospace" font-size="9" fill="${col}">${t}</text>`).join('')}
+      <path d="M246 156 V254" stroke="${C.warn}" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="258" y="208" font-family="monospace" font-size="8" fill="${C.warn}">⚡ 사이에 끼어듦!</text>
+      <path d="M198 124 Q160 60 230 76" fill="none" stroke="${C.cyanD}" stroke-width="1" stroke-dasharray="2 3" opacity=".6"/>
+      <path d="M266 254 Q230 110 240 102" fill="none" stroke="${C.vioD}" stroke-width="1" stroke-dasharray="2 3" opacity=".6"/>
+      <rect x="120" y="318" width="220" height="44" rx="6" fill="#1a1426" stroke="${C.warn}" stroke-width="1.5"/>
+      <text x="230" y="338" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.warn}">결과: count = 6 (7이어야!)</text>
+      <text x="230" y="354" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">둘 다 5를 읽음 — 증가 하나 증발</text>
+      ${hot('lock', '해법의 방',
+        `<rect class="hot__shape" x="360" y="318" width="160" height="44" rx="6" fill="#16301f" stroke="${C.grn}" stroke-width="1.5"/>
+         <text x="440" y="345" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.grn}">⚿ 락으로 막기</text>`,
+        440, 384, 'middle')}
+      <text x="230" y="398" text-anchor="middle" class="s-label" fill="${C.fnt}">언제 끼어들지는 스케줄러 마음 — "가끔만" 터지는 버그</text>
+    `),
+
+    /* ─── D1.4 락: 임계 구역의 문 ─── */
+    lock: svg(`
+      ${lbl(40, 40, 'MUTEX · 한 번에 한 실만')}
+      <rect x="200" y="70" width="200" height="200" rx="8" fill="#16301f" stroke="${C.grn}" stroke-width="1.5"/>
+      <text x="300" y="96" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.grn}">임계 구역 (공유 데이터)</text>
+      <rect x="262" y="130" width="76" height="44" rx="5" fill="${C.pan2}" stroke="${C.grn}"/>
+      <text x="300" y="157" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.grn}">count</text>
+      <!-- 안에서 작업 중인 T1 -->
+      <circle cx="300" cy="220" r="16" fill="${C.pan}" stroke="${C.cyan}" stroke-width="2"/>
+      <text x="300" y="225" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.cyan}">T1</text>
+      <!-- 문과 자물쇠 -->
+      <rect x="184" y="148" width="16" height="60" rx="3" fill="#221a2e" stroke="${C.vio}" stroke-width="2"/>
+      <circle cx="192" cy="178" r="7" fill="none" stroke="${C.vio}" stroke-width="2"/>
+      <path d="M192 174 V182" stroke="${C.vio}" stroke-width="2"/>
+      <text x="192" y="226" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.vio}">🔒 잠김</text>
+      <!-- 줄 서는 스레드들 -->
+      ${[['T2', 120, C.vio], ['T3', 70, C.grn]].map(([t, x, col]) => `
+        <circle cx="${x}" cy="178" r="14" fill="${C.pan}" stroke="${col}" opacity=".7"/>
+        <text x="${x}" y="183" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${col}">${t}</text>`).join('')}
+      <text x="95" y="148" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">문 앞에서 대기…</text>
+      ${flow('M70 178 H176', C.vioD, 1, 2.6, 2)}
+      <!-- 나가는 문 -->
+      <path d="M400 178 H460" stroke="${C.grn}" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="470" y="170" font-family="monospace" font-size="8" fill="${C.grn}">작업 끝 →</text>
+      <text x="470" y="184" font-family="monospace" font-size="8" fill="${C.grn}">해제(unlock)</text>
+      <rect x="60" y="300" width="480" height="56" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
+      <text x="300" y="322" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.dim}">획득(lock) → 임계 구역 → 해제(unlock) — 화장실 문고리 프로토콜</text>
+      <text x="300" y="342" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.warn}">비용: 기다림. 락 구간이 크면 사실상 한 줄 서기 = 병렬성 소멸</text>
+      ${hot('deadlock', '문이 두 개라면?',
+        `<rect class="hot__shape" x="140" y="370" width="320" height="42" rx="6" fill="#1a1426" stroke="${C.warn}" stroke-width="1.5"/>
+         <text x="300" y="396" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.warn}">⟲ 서로 상대의 문 앞에 선다면… — 데드락</text>`,
+        300, 366, 'middle')}
+    `),
+
+    /* ─── D1.6 데드락: 원형 대기 ─── */
+    deadlock: svg(`
+      ${lbl(40, 40, 'DEADLOCK · 원형 대기')}
+      <circle cx="170" cy="150" r="30" fill="${C.pan2}" stroke="${C.cyan}" stroke-width="2"/>
+      <text x="170" y="156" text-anchor="middle" font-family="monospace" font-size="11" fill="${C.cyan}">T1</text>
+      <circle cx="430" cy="150" r="30" fill="${C.pan2}" stroke="${C.vio}" stroke-width="2"/>
+      <text x="430" y="156" text-anchor="middle" font-family="monospace" font-size="11" fill="${C.vio}">T2</text>
+      <rect x="276" y="62" width="48" height="40" rx="5" fill="#10262c" stroke="${C.cyan}" stroke-width="1.5"/>
+      <text x="300" y="87" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.cyan}">락 A</text>
+      <rect x="276" y="198" width="48" height="40" rx="5" fill="#1a1426" stroke="${C.vio}" stroke-width="1.5"/>
+      <text x="300" y="223" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.vio}">락 B</text>
+      <!-- 소유(실선) -->
+      <path d="M276 82 Q210 90 184 124" fill="none" stroke="${C.cyan}" stroke-width="2"/>
+      <text x="208" y="92" font-family="monospace" font-size="8" fill="${C.cyan}">소유</text>
+      <path d="M324 218 Q392 210 416 176" fill="none" stroke="${C.vio}" stroke-width="2"/>
+      <text x="372" y="232" font-family="monospace" font-size="8" fill="${C.vio}">소유</text>
+      <!-- 대기(점선, 반대 방향) -->
+      <path d="M196 172 Q240 210 276 218" fill="none" stroke="${C.warn}" stroke-width="2" stroke-dasharray="5 4"/>
+      <path d="M268 211 L276 218 L266 222" fill="none" stroke="${C.warn}" stroke-width="2"/>
+      <text x="206" y="222" font-family="monospace" font-size="8" fill="${C.warn}">B를 기다림…</text>
+      <path d="M404 128 Q360 90 324 82" fill="none" stroke="${C.warn}" stroke-width="2" stroke-dasharray="5 4"/>
+      <path d="M332 75 L324 82 L334 89" fill="none" stroke="${C.warn}" stroke-width="2"/>
+      <text x="356" y="74" font-family="monospace" font-size="8" fill="${C.warn}">A를 기다림…</text>
+      ${flow('M196 172 Q240 210 276 218', C.warn, 1, 2.0, 2)}
+      ${flow('M404 128 Q360 90 324 82', C.warn, 1, 2.0, 2)}
+      <text x="300" y="150" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.warn}">⟲ 고리 완성 = 영원히 정지</text>
+      <rect x="60" y="280" width="480" height="76" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
+      <text x="300" y="304" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.dim}">성립 4조건: 상호 배제 · 점유 대기 · 비선점 · 원형 대기 — 전부 갖춰져야 발생</text>
+      <text x="300" y="326" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.grn}">처방: 하나만 깨라 — 가장 흔한 건 "모두 같은 순서로 잡기"(원형 대기 차단)</text>
+      <text x="300" y="346" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">아래 미니랩에서 순서를 바꿔 직접 멈춰 보세요</text>
     `),
 
     /* ─── D1 시스템 콜: 문 ─── */
