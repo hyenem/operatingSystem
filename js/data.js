@@ -240,6 +240,11 @@ const NODES = {
       '<b>시그널</b>은 프로세스에게 던지는 초인종입니다 — Ctrl+C(SIGINT), kill(SIGTERM), 그리고 거부할 수 없는 SIGKILL. 그 밖에 공유 메모리(가장 빠름), 소켓(네트워크까지 — 3편의 영역)이 있습니다.',
     ],
     lab: 'pipelab',
+    bridge: {
+      series: '네트워크', book: '회선 속으로',
+      url: 'https://hyenem.github.io/network/#/socket',
+      text: '소켓이 컴퓨터 밖으로 나가면 — 포트·TCP·지구 반 바퀴의 이야기가 시작됩니다. 3편의 소켓 노드가 이 문의 반대편입니다.',
+    },
     kids: [],
   },
   boot: {
