@@ -311,6 +311,184 @@ const LABS = {
     });
   },
 
+  /* ── 간트 차트: FCFS vs SJF vs RR (공룡책 예제) ── */
+  ganttlab(el) {
+    const JOBS = [['P1', 24], ['P2', 3], ['P3', 3]]; // 버스트 시간
+    const ALG = {
+      FCFS: { seg: [['P1', 0, 24], ['P2', 24, 27], ['P3', 27, 30]], wait: { P1: 0, P2: 24, P3: 27 } },
+      SJF: { seg: [['P2', 0, 3], ['P3', 3, 6], ['P1', 6, 30]], wait: { P1: 6, P2: 0, P3: 3 } },
+      'RR(q=4)': { seg: [['P1', 0, 4], ['P2', 4, 7], ['P3', 7, 10], ['P1', 10, 30]], wait: { P1: 6, P2: 4, P3: 7 } },
+    };
+    const COL = { P1: '#56d6cf', P2: '#86e6a2', P3: '#b08ae0' };
+    el.innerHTML = `
+      <div class="lab lab--gantt">
+        <p class="lab__caption" style="margin-top:0">작업: P1(24) · P2(3) · P3(3) — 같은 셋, 규칙만 바꿔서.</p>
+        <div class="lab__tabs">${Object.keys(ALG).map(a => `<button class="lab__tab" data-g="${a}">${a}</button>`).join('')}</div>
+        <div class="gnt-bar"></div>
+        <div class="gnt-stats"></div>
+        <p class="lab__caption gnt-cap">규칙을 골라 간트 차트를 비교해 보세요.</p>
+      </div>`;
+    const bar = el.querySelector('.gnt-bar');
+    const stats = el.querySelector('.gnt-stats');
+    const cap = el.querySelector('.gnt-cap');
+    const tabs = el.querySelectorAll('.lab__tab');
+    tabs.forEach(t => t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.toggle('lab__tab--on', x === t));
+      const a = ALG[t.dataset.g];
+      bar.innerHTML = a.seg.map(([p, s0, e]) =>
+        `<span class="gnt-seg" style="flex:${e - s0};background:${COL[p]}22;border-color:${COL[p]};color:${COL[p]}">${p}<small>${e - s0}</small></span>`).join('');
+      const w = a.wait, avg = ((w.P1 + w.P2 + w.P3) / 3).toFixed(1);
+      stats.innerHTML = `대기: P1=${w.P1} · P2=${w.P2} · P3=${w.P3} → 평균 <b>${avg}</b>`;
+      cap.innerHTML = t.dataset.g === 'FCFS'
+        ? '긴 P1 뒤에 짧은 둘이 갇혔습니다(호송대 효과) — 평균 17.0'
+        : t.dataset.g === 'SJF'
+          ? '짧은 것 먼저 — 평균 3.0! (FCFS의 1/5) 단, 버스트 시간을 미리 알아야 한다는 함정'
+          : '한 조각(4)씩 순환 — 평균 5.7. 최적은 아니지만 <b>모두가 금방 첫 응답</b>을 받습니다';
+    }));
+    tabs[0].click();
+  },
+
+  /* ── 식사하는 철학자: 전략을 골라 굶겨보기 ── */
+  philolab(el) {
+    const ALL_LEFT = [
+      { st: ['생각', '생각', '생각', '생각', '생각'], fk: ['—', '—', '—', '—', '—'], cap: '철학자 5명이 배가 고파집니다 — 전원 왼쪽 포크부터 집기로 했습니다.' },
+      { st: ['🍴L', '🍴L', '🍴L', '🍴L', '🍴L'], fk: ['P1', 'P2', 'P3', 'P4', 'P5'], cap: '동시에 전원이 왼쪽 포크를 집었습니다 — 포크 5개가 전부 한 손씩에.' },
+      { st: ['오른쪽 대기', '오른쪽 대기', '오른쪽 대기', '오른쪽 대기', '오른쪽 대기'], fk: ['P1', 'P2', 'P3', 'P4', 'P5'], cap: '모두 오른쪽 포크를 기다립니다 — 그런데 그건 옆 사람의 왼손에…' },
+      { st: ['💀 굶주림', '💀 굶주림', '💀 굶주림', '💀 굶주림', '💀 굶주림'], fk: ['P1', 'P2', 'P3', 'P4', 'P5'], cap: '<b>원형 대기 완성 — 전원 아사.</b> 아무도 양보하지 않고, 아무도 먹지 못합니다. 데드락의 가장 유명한 초상화.' },
+    ];
+    const ONE_FLIP = [
+      { st: ['생각', '생각', '생각', '생각', '생각'], fk: ['—', '—', '—', '—', '—'], cap: '이번엔 P5만 <b>오른쪽부터</b> 집기로 합니다(비대칭) — 단 한 명의 규칙 변경.' },
+      { st: ['🍴L', '🍴L', '🍴L', '🍴L', '대기'], fk: ['P1', 'P2', 'P3', 'P4', '—'], cap: 'P1~P4는 왼쪽을 집었지만, P5의 "오른쪽"(=포크1)은 P1의 손에 — P5 대기. 포크 5가 비었습니다!' },
+      { st: ['🍴L', '🍴L', '🍴L', '🍽 식사!', '대기'], fk: ['P1', 'P2', 'P3', 'P4', 'P4'], cap: '비어 있던 포크 5를 P4가 집어 <b>식사 시작!</b> — 고리가 끊겼습니다.' },
+      { st: ['🍽 식사!', '…', '…', '완료 → 반납', '🍴 차례 옴'], fk: ['P1', 'P2', 'P3', '—', 'P5'], cap: 'P4가 다 먹고 반납 → 이웃들이 차례차례 식사. <b>전원 굶지 않음 ✓</b> — 원형 대기 하나만 깨도 충분합니다.' },
+    ];
+    let seq = null, si = -1;
+    el.innerHTML = `
+      <div class="lab lab--philo">
+        <div class="lab__tabs">
+          <button class="lab__tab" data-p="left">전원 왼쪽부터</button>
+          <button class="lab__tab" data-p="flip">한 명만 오른쪽부터</button>
+        </div>
+        <div class="cc-view">
+          <div class="ph-row">${[1,2,3,4,5].map(i => `<span class="ph-cell" data-ph="${i-1}">P${i}<b>생각</b></span>`).join('')}</div>
+          <div class="ph-row ph-row--fk">${[1,2,3,4,5].map(i => `<span class="ph-fk" data-fk="${i-1}">🍴${i}<b>—</b></span>`).join('')}</div>
+        </div>
+        <button class="st-next cc-btn" disabled>▸ 다음 장면</button>
+        <p class="lab__caption">전략을 고르세요 — 단 한 명의 규칙이 전원의 운명을 가릅니다.</p>
+      </div>`;
+    const tabs = el.querySelectorAll('.lab__tab');
+    const btn = el.querySelector('.cc-btn');
+    const cap = el.querySelector('.lab__caption');
+    function paint() {
+      const s = si < 0 ? { st: ['생각','생각','생각','생각','생각'], fk: ['—','—','—','—','—'] } : seq[si];
+      el.querySelectorAll('.ph-cell').forEach((c, i) => {
+        c.querySelector('b').textContent = s.st[i];
+        c.classList.toggle('ph-dead', s.st[i].includes('💀'));
+        c.classList.toggle('ph-eat', s.st[i].includes('🍽'));
+      });
+      el.querySelectorAll('.ph-fk').forEach((c, i) => { c.querySelector('b').textContent = s.fk[i]; });
+      if (si >= 0) cap.innerHTML = seq[si].cap;
+      btn.textContent = seq && si >= seq.length - 1 ? '↻ 처음부터' : '▸ 다음 장면';
+    }
+    tabs.forEach(t => t.addEventListener('click', () => {
+      seq = t.dataset.p === 'left' ? ALL_LEFT : ONE_FLIP; si = -1;
+      tabs.forEach(x => x.classList.toggle('lab__tab--on', x === t));
+      btn.disabled = false; btn.textContent = '▸ 다음 장면';
+      cap.innerHTML = t.dataset.p === 'left' ? '대칭의 함정 — 진행해 보세요.' : '비대칭의 지혜 — 진행해 보세요.';
+      paint();
+    }));
+    btn.addEventListener('click', () => { si = si >= seq.length - 1 ? -1 : si + 1; paint(); });
+  },
+
+  /* ── 단편화: 할당·해제를 거듭하면 ── */
+  fraglab(el) {
+    const N = 20;
+    const STEPS = [
+      { mem: 'AAAAA...............', cap: 'A(5칸) 입주 — 아직 평화롭습니다.' },
+      { mem: 'AAAAABBB............', cap: 'B(3칸) 입주.' },
+      { mem: 'AAAAABBBCCCC........', cap: 'C(4칸) 입주.' },
+      { mem: 'AAAAA...CCCC........', cap: 'B 퇴거 — 가운데 3칸 구멍이 생겼습니다.' },
+      { mem: 'AAAAA...CCCCDDDDD...', cap: 'D(5칸)는 구멍(3칸)에 안 들어가 뒤로 — 구멍은 그대로 남습니다.' },
+      { mem: '.....EEE on hold....', cap: '<b>E(6칸) 입주 실패!</b> 빈칸 합계 = 3+3+2 = 8칸인데, 연속 6칸이 없습니다 — <b>외부 단편화</b>. 페이징이 발명된 이유가 바로 이 장면입니다.', fail: true, prev: 'AAAAA...CCCCDDDDD...' },
+    ];
+    let si = -1;
+    const COL = { A: '#56d6cf', B: '#86e6a2', C: '#b08ae0', D: '#e0916f' };
+    el.innerHTML = `
+      <div class="lab lab--frag">
+        <div class="frag-bar">${Array.from({ length: N }, () => '<span class="frag-c"></span>').join('')}</div>
+        <button class="st-next cc-btn">▸ 다음 사건</button>
+        <p class="lab__caption">메모리 20칸 — 연속 할당의 삶을 지켜보세요.</p>
+      </div>`;
+    const cells = el.querySelectorAll('.frag-c');
+    const btn = el.querySelector('.cc-btn');
+    const cap = el.querySelector('.lab__caption');
+    btn.addEventListener('click', () => {
+      si = si >= STEPS.length - 1 ? -1 : si + 1;
+      const st = si < 0 ? { mem: '.'.repeat(N) } : STEPS[si];
+      const mem = st.fail ? st.prev : st.mem;
+      cells.forEach((c, i) => {
+        const ch = mem[i];
+        c.style.background = ch !== '.' && COL[ch] ? COL[ch] + '33' : 'transparent';
+        c.style.borderColor = ch !== '.' && COL[ch] ? COL[ch] : 'var(--line)';
+        c.textContent = ch !== '.' ? ch : '';
+        c.classList.toggle('frag-fail', !!st.fail && ch === '.');
+      });
+      cap.innerHTML = si < 0 ? '메모리 20칸 — 연속 할당의 삶을 지켜보세요.' : st.cap;
+      btn.textContent = si >= STEPS.length - 1 ? '↻ 처음부터' : '▸ 다음 사건';
+    });
+  },
+
+  /* ── 디스크 스케줄링: FCFS vs SCAN 헤드 이동 ── */
+  scanlab(el) {
+    const START = 53;
+    const FCFS = [98, 183, 37, 122, 14, 124, 65, 67];
+    const SCAN = [37, 14, 0, 65, 67, 98, 122, 124, 183];
+    let seq = null, si = -1, pos = START, total = 0;
+    el.innerHTML = `
+      <div class="lab lab--scan">
+        <div class="lab__tabs">
+          <button class="lab__tab" data-s="fcfs">FCFS (온 순서)</button>
+          <button class="lab__tab" data-s="scan">SCAN (엘리베이터)</button>
+        </div>
+        <svg class="scan-svg" viewBox="0 0 240 56">
+          <line x1="8" y1="28" x2="232" y2="28" stroke="#26384a" stroke-width="2"/>
+          ${[14,37,65,67,98,122,124,183].map(t => `<circle cx="${8 + t / 199 * 224}" cy="28" r="2.5" fill="#2c7a78" data-t="${t}"/>`).join('')}
+          <circle class="scan-head" cx="${8 + 53 / 199 * 224}" cy="28" r="6" fill="#b08ae0"/>
+        </svg>
+        <div class="cc-mem">이동 거리 <b data-c="tot">0</b> 트랙</div>
+        <button class="st-next cc-btn" disabled>▸ 다음 요청</button>
+        <p class="lab__caption">방식을 고르세요 — 헤드(보라)가 53에서 출발합니다.</p>
+      </div>`;
+    const tabs = el.querySelectorAll('.lab__tab');
+    const head = el.querySelector('.scan-head');
+    const tot = el.querySelector('[data-c="tot"]');
+    const btn = el.querySelector('.cc-btn');
+    const cap = el.querySelector('.lab__caption');
+    head.style.transition = 'cx .5s';
+    function reset() { si = -1; pos = START; total = 0; head.setAttribute('cx', 8 + START / 199 * 224); tot.textContent = '0'; }
+    tabs.forEach(t => t.addEventListener('click', () => {
+      seq = t.dataset.s === 'fcfs' ? FCFS : SCAN;
+      tabs.forEach(x => x.classList.toggle('lab__tab--on', x === t));
+      reset(); btn.disabled = false; btn.textContent = '▸ 다음 요청';
+      cap.innerHTML = t.dataset.s === 'fcfs' ? '요청이 도착한 순서 그대로 — 진행해 보세요.' : '0 방향으로 쓸고 반환 — 진행해 보세요.';
+    }));
+    btn.addEventListener('click', () => {
+      if (si >= seq.length - 1) { reset(); btn.textContent = '▸ 다음 요청'; cap.innerHTML = '다시 한 번!'; return; }
+      si++;
+      const next = seq[si];
+      total += Math.abs(next - pos);
+      cap.innerHTML = `${pos} → <b>${next}</b> (+${Math.abs(next - pos)})`;
+      pos = next;
+      head.setAttribute('cx', 8 + next / 199 * 224);
+      tot.textContent = total;
+      if (si >= seq.length - 1) {
+        btn.textContent = '↻ 처음부터';
+        const isF = seq === FCFS;
+        cap.innerHTML = `완료 — 총 <b>${total} 트랙</b>. ` + (isF ? 'SCAN이라면 236 — 거의 1/3!' : 'FCFS였다면 640 — 엘리베이터의 승리.');
+      }
+    });
+  },
+
   /* ── strace: 시스템 콜 한 번의 왕복을 한 단계씩 ── */
   strace(el) {
     const STEPS = [

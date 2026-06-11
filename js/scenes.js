@@ -173,9 +173,9 @@
       <rect x="60" y="300" width="480" height="56" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
       <text x="300" y="322" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.dim}">획득(lock) → 임계 구역 → 해제(unlock) — 화장실 문고리 프로토콜</text>
       <text x="300" y="342" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.warn}">비용: 기다림. 락 구간이 크면 사실상 한 줄 서기 = 병렬성 소멸</text>
-      ${hot('deadlock', '문이 두 개라면?',
-        `<rect class="hot__shape" x="140" y="370" width="320" height="42" rx="6" fill="#1a1426" stroke="${C.warn}" stroke-width="1.5"/>
-         <text x="300" y="396" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.warn}">⟲ 서로 상대의 문 앞에 선다면… — 데드락</text>`,
+      ${hot('semaphore', '락 너머의 도구들',
+        `<rect class="hot__shape" x="140" y="370" width="320" height="42" rx="6" fill="#221a2e" stroke="${C.vio}" stroke-width="1.5"/>
+         <text x="300" y="396" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.vio}">◍ 세마포어 · 조건변수 — 더 정교한 기다림으로 ↓</text>`,
         300, 366, 'middle')}
     `),
 
@@ -264,6 +264,10 @@
     kernel: svg(`
       <rect x="50" y="36" width="500" height="350" rx="10" fill="#100b18" stroke="${C.vio}" stroke-width="1.5"/>
       ${lbl(66, 60, 'THE KERNEL · Ring 0 플로어플랜')}
+      ${hot('security', '문지기',
+        `<rect class="hot__shape" x="408" y="44" width="128" height="24" rx="12" fill="#221a2e" stroke="${C.vioD}" stroke-width="1.5"/>
+         <text x="460" y="60" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.vio}">🛡 보호·보안</text>`,
+        552, 60, 'end')}
       ${hot('sched', '스케줄러',
         `<rect class="hot__shape" x="66" y="74" width="150" height="124" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
          ${[0,1,2].map(i => `<rect x="${80+i*40}" y="96" width="32" height="20" rx="3" fill="${C.pan}" stroke="${C.cyanD}"/>`).join('')}
@@ -311,10 +315,13 @@
     /* ─── D4 스케줄러 ─── */
     sched: svg(`
       ${lbl(40, 40, 'SCHEDULER · 다음 주자는 누구인가')}
-      <text x="70" y="86" font-family="monospace" font-size="9" fill="${C.fnt}">런큐 (실행 준비 완료):</text>
-      ${[['P7 · 에디터', 0], ['P3 · 브라우저', 1], ['P9 · 음악', 2]].map(([t, i]) => `
-        <rect x="${70}" y="${100 + i * 48}" width="180" height="38" rx="5" fill="${C.pan2}" stroke="${i===0?C.vio:C.ln2}"/>
-        <text x="${160}" y="${124 + i * 48}" text-anchor="middle" font-family="monospace" font-size="9" fill="${i===0?C.vio:C.dim}">${t}</text>`).join('')}
+      ${hot('schedalgo', '줄 세우는 규칙은?',
+        `<text x="70" y="86" font-family="monospace" font-size="9" fill="${C.fnt}">런큐 (실행 준비 완료):</text>
+         <rect class="hot__shape" x="62" y="92" width="196" height="156" rx="6" fill="none" stroke="${C.ln2}" stroke-dasharray="4 4"/>
+         ${[['P7 · 에디터', 0], ['P3 · 브라우저', 1], ['P9 · 음악', 2]].map(([t, i]) => `
+           <rect x="${70}" y="${100 + i * 48}" width="180" height="38" rx="5" fill="${C.pan2}" stroke="${i===0?C.vio:C.ln2}"/>
+           <text x="${160}" y="${124 + i * 48}" text-anchor="middle" font-family="monospace" font-size="9" fill="${i===0?C.vio:C.dim}">${t}</text>`).join('')}`,
+        160, 264, 'middle')}
       ${arrowR(250, 119, 320, C.vio)}
       ${flow('M252 119 H318', C.vio, 2, 1.6, 2.5)}
       <rect x="324" y="88" width="130" height="80" rx="8" fill="${C.metal}" stroke="${C.vio}" stroke-width="1.5"/>
@@ -395,7 +402,10 @@
          <text x="450" y="266" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">요구 페이징? CoW?</text>
          <text x="450" y="284" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">아니면 segfault?</text>`,
         450, 332, 'middle')}
-      <text x="300" y="368" text-anchor="middle" class="s-label" fill="${C.fnt}">1편의 MMU가 지도를 "읽는" 쪽이라면, 여기는 지도를 "그리는" 쪽</text>
+      ${hot('allocation', '왜 페이징인가',
+        `<rect class="hot__shape" x="60" y="346" width="480" height="40" rx="6" fill="#221a2e" stroke="${C.vioD}" stroke-width="1.5"/>
+         <text x="300" y="371" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.vio}">▦ 페이징 이전의 비극 — 단편화의 역사로</text>`,
+        300, 340, 'middle')}
     `),
 
     /* ─── D4 파일시스템 ─── */
@@ -442,11 +452,16 @@
       <rect x="100" y="260" width="400" height="50" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
       <text x="300" y="282" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.dim}">장치 레지스터 (MMIO — 메모리처럼 보이는 주소에 쓰기)</text>
       <text x="300" y="300" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">1편 주소 버스에서 본 "메모리 맵 I/O"가 바로 이것</text>
-      ${hot('irqhandler', '일이 끝나면 — 벨이 울린다',
-        `<rect class="hot__shape" x="150" y="330" width="300" height="56" rx="6" fill="#1a1426" stroke="${C.warn}" stroke-width="1.5"/>
-         <text x="300" y="354" text-anchor="middle" font-family="monospace" font-size="11" fill="${C.warn}">⚡ 인터럽트 발생!</text>
-         <text x="300" y="372" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">"다 읽었어요" — 장치가 CPU를 부른다</text>`,
-        300, 410, 'middle')}
+      ${hot('diskio', '요청 줄 세우기',
+        `<rect class="hot__shape" x="60" y="330" width="220" height="56" rx="6" fill="${C.pan2}" stroke="${C.cyanD}" stroke-width="1.5"/>
+         <text x="170" y="354" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.cyan}">⛗ 디스크 스케줄링</text>
+         <text x="170" y="372" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">엘리베이터처럼 · RAID</text>`,
+        170, 410, 'middle')}
+      ${hot('irqhandler', '벨이 울린다',
+        `<rect class="hot__shape" x="320" y="330" width="220" height="56" rx="6" fill="#1a1426" stroke="${C.warn}" stroke-width="1.5"/>
+         <text x="430" y="354" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.warn}">⚡ 인터럽트 발생!</text>
+         <text x="430" y="372" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">"다 읽었어요"</text>`,
+        430, 410, 'middle')}
     `),
 
     /* ─── D5 인터럽트 핸들러 ─── */
@@ -485,7 +500,11 @@
         <text x="${148 + i * 152}" y="156" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">${d}</text>`).join('')}
       <!-- 경계선 -->
       <line x1="40" y1="226" x2="560" y2="226" stroke="${C.vio}" stroke-width="2" stroke-dasharray="8 6"/>
-      <text x="300" y="216" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.vio}">— 여기까지가 소프트웨어 —</text>
+      <text x="240" y="216" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.vio}">— 여기까지가 소프트웨어 —</text>
+      ${hot('virt', '경계를 복제하면?',
+        `<rect class="hot__shape" x="420" y="200" width="136" height="22" rx="11" fill="#221a2e" stroke="${C.vioD}" stroke-width="1.5"/>
+         <text x="488" y="215" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.vio}">⧇ 가상머신·컨테이너</text>`,
+        488, 194, 'middle')}
       ${flow('M120 194 V250 M300 194 V250 M480 194 V250', C.cyan, 3, 2.2, 2.5)}
       <rect x="60" y="256" width="480" height="110" rx="8" fill="${C.pan}" stroke="${C.cyanD}"/>
       <text x="300" y="282" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.cyan}">전기의 세계 (1편 「기계 속으로」)</text>
@@ -671,6 +690,173 @@
       <text x="479" y="270" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">fork의 가계도</text>
       <text x="479" y="84" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">루트 노드(프로세스)로</text>
       <text x="479" y="98" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">돌아가면 — 한 바퀴 ⟳</text>
+    `),
+
+    /* ─── D4.3 스케줄링 알고리즘 ─── */
+    schedalgo: svg(`
+      ${lbl(40, 40, 'SCHEDULING · 같은 줄, 다른 규칙')}
+      ${[['FCFS', '온 순서대로', '단순 · 호송대 효과(긴 작업 뒤 정체)', 64, C.cyan],
+         ['SJF', '짧은 것 먼저', '평균 대기 최소 · 미래를 알아야 + 긴 작업 기아', 64+124, C.grn],
+         ['RR', '한 조각씩 순환', '응답성 보장 · 퀀텀 크기가 관건', 64+248, C.vio],
+         ['MLFQ', '여러 큐 + 강등', 'SJF를 과거로 근사 — 실전의 답', 64+372, C.warn]].map(([t, d1, d2, y, col]) => `
+        <rect x="60" y="${y}" width="480" height="56" rx="6" fill="${C.pan2}" stroke="${col}"/>
+        <text x="120" y="${y+34}" text-anchor="middle" font-family="monospace" font-size="11" fill="${col}">${t}</text>
+        <text x="200" y="${y+24}" font-family="monospace" font-size="9" fill="${C.dim}">${d1}</text>
+        <text x="200" y="${y+42}" font-family="monospace" font-size="7.5" fill="${C.fnt}">${d2}</text>`).join('')}
+      <text x="300" y="378" text-anchor="middle" class="s-label" fill="${C.fnt}">퀀텀이 너무 크면 FCFS, 너무 작으면 전환 비용만 — 균형의 예술</text>
+      <text x="300" y="400" text-anchor="middle" class="s-label" fill="${C.fnt}">아래 미니랩: 공룡책 예제로 세 규칙의 평균 대기시간 비교</text>
+    `),
+
+    /* ─── D1.5 세마포어·조건변수 ─── */
+    semaphore: svg(`
+      ${lbl(40, 40, 'SEMAPHORE · 정원 카운터')}
+      <rect x="60" y="64" width="220" height="180" rx="8" fill="${C.pan2}" stroke="${C.vio}"/>
+      <text x="170" y="90" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.vio}">세마포어 = 3 (정원)</text>
+      ${[0,1,2].map(i => `<circle cx="${110+i*60}" cy="140" r="20" fill="#16301f" stroke="${C.grn}"/>
+        <text x="${110+i*60}" y="146" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.grn}">T${i+1}</text>`).join('')}
+      <text x="170" y="186" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">입장 = wait(P): 카운터−1</text>
+      <text x="170" y="204" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">퇴장 = signal(V): 카운터+1</text>
+      <circle cx="40" cy="140" r="14" fill="${C.pan}" stroke="${C.warn}" opacity=".8"/>
+      <text x="40" y="145" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.warn}">T4</text>
+      <text x="40" y="172" text-anchor="middle" font-family="monospace" font-size="7" fill="${C.warn}">정원 초과 — 대기</text>
+      <rect x="320" y="64" width="220" height="180" rx="8" fill="${C.pan2}" stroke="${C.cyan}"/>
+      <text x="430" y="90" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.cyan}">조건변수 — 기다림의 침대</text>
+      <text x="430" y="124" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.dim}">while (큐가 빔)</text>
+      <text x="430" y="142" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.cyan}">  cond_wait(...)  💤</text>
+      <text x="430" y="168" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.dim}">생산자: 넣고 →</text>
+      <text x="430" y="186" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.grn}">  cond_signal( )  ⏰</text>
+      <text x="430" y="216" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.warn}">철칙: 깨면 while로 재확인(가짜 기상)</text>
+      ${flow('M280 154 H320', C.vioD, 1, 2.2, 2)}
+      <text x="300" y="278" text-anchor="middle" class="s-label" fill="${C.fnt}">N=1 세마포어 = 뮤텍스 · 다익스트라(1965)의 발명</text>
+      ${hot('classic', '도구를 시험할 무대',
+        `<rect class="hot__shape" x="140" y="300" width="320" height="44" rx="6" fill="#16301f" stroke="${C.grn}" stroke-width="1.5"/>
+         <text x="300" y="327" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.grn}">🍴 고전 문제의 방 — 철학자들이 기다린다</text>`,
+        300, 372, 'middle')}
+    `),
+
+    /* ─── D1.65 고전 문제: 원탁의 철학자 ─── */
+    classic: (function () {
+      const cx = 300, cy = 180, R = 95;
+      let ph = '', fk = '';
+      for (let i = 0; i < 5; i++) {
+        const a = i / 5 * Math.PI * 2 - Math.PI / 2;
+        const x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R;
+        ph += `<circle cx="${x}" cy="${y}" r="22" fill="#101a25" stroke="#b08ae0" stroke-width="1.5"/>
+               <text x="${x}" y="${y+4}" text-anchor="middle" font-family="monospace" font-size="9" fill="#b08ae0">P${i+1}</text>`;
+        const fa = a + Math.PI / 5;
+        const fx = cx + Math.cos(fa) * (R - 32), fy = cy + Math.sin(fa) * (R - 32);
+        fk += `<text x="${fx}" y="${fy+4}" text-anchor="middle" font-size="12" fill="#86e6a2">🍴</text>`;
+      }
+      return svg(`${lbl(40, 40, 'DINING PHILOSOPHERS · 원탁의 비극')}
+        <circle cx="${cx}" cy="${cy}" r="${R - 38}" fill="#0c121b" stroke="#26384a"/>
+        ${ph}${fk}
+        <text x="${cx}" y="${cy + 4}" text-anchor="middle" font-family="monospace" font-size="8" fill="#566578">생각 ↔ 식사</text>
+        <text x="300" y="316" text-anchor="middle" class="s-label" fill="#7e8d9d">철학자 5명 · 포크 5개 — 먹으려면 양옆 포크 둘 다 필요</text>
+        <text x="300" y="322" text-anchor="middle" class="s-label" fill="#e0916f">전원이 왼쪽부터 집으면? 아래 미니랩에서 직접 굶겨 보세요</text>
+        ${hot('deadlock', '그 결말의 정체',
+          `<rect class="hot__shape" x="150" y="338" width="300" height="40" rx="6" fill="#1a1426" stroke="#e0916f" stroke-width="1.5"/>
+           <text x="300" y="363" text-anchor="middle" font-family="monospace" font-size="10" fill="#e0916f">⟲ 원형 대기의 일반 이론 — 데드락으로</text>`,
+          300, 404, 'middle')}
+      `);
+    })(),
+
+    /* ─── D4.2 할당과 단편화 ─── */
+    allocation: svg(`
+      ${lbl(40, 40, 'FRAGMENTATION · 연속 할당의 비극')}
+      <text x="60" y="80" font-family="monospace" font-size="9" fill="${C.fnt}">연속 할당 — 시간이 지나면:</text>
+      ${[['A', 60, 90, C.cyan], ['빈 3', 150, 45, null], ['B', 195, 75, C.grn], ['빈 2', 270, 30, null], ['C', 300, 105, C.vio], ['빈 4', 405, 60, null], ['D', 465, 75, C.warn]].map(([t, x, w, col]) => `
+        <rect x="${x}" y="92" width="${w}" height="40" rx="3" fill="${col ? C.pan2 : C.pan}" stroke="${col || C.ln}" ${col ? '' : 'stroke-dasharray="3 3"'}/>
+        <text x="${x + w / 2}" y="117" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${col || C.fnt}">${t}</text>`).join('')}
+      <text x="300" y="158" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.warn}">빈칸 합계 9 — 그런데 크기 5짜리는 못 들어간다! (외부 단편화)</text>
+      ${arrowR(290, 186, 310, C.vio)}
+      <text x="300" y="180" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.vio}">발상의 전환</text>
+      <text x="60" y="222" font-family="monospace" font-size="9" fill="${C.fnt}">페이징 — 연속일 필요를 없애자:</text>
+      ${(function(){let r='';for(let i=0;i<12;i++){const used=[1,0,1,1,0,1,0,1,1,0,1,0][i];const col=['#10262c','#16301f'][i%2];r+=`<rect x="${60+i*40}" y="234" width="34" height="34" rx="3" fill="${used?col:'#0c121b'}" stroke="${used?'#2c7a78':'#1b2733'}" ${used?'':'stroke-dasharray="3 3"'}/>`;}return r;})()}
+      <text x="300" y="296" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.grn}">어느 빈 프레임이든 OK — 지도(페이지 테이블)가 이어 붙인다</text>
+      <text x="300" y="330" text-anchor="middle" class="s-label" fill="${C.fnt}">대가: 내부 단편화(페이지 안 자투리) + 지도 비용 — 그래도 압승</text>
+      <text x="300" y="360" text-anchor="middle" class="s-label" fill="${C.fnt}">malloc의 힙 안에서는 지금도 같은 싸움이 반복된다 (할당기 설계)</text>
+    `),
+
+    /* ─── D4.3 디스크 스케줄링·RAID ─── */
+    diskio: svg(`
+      ${lbl(40, 40, 'DISK SCHEDULING · 엘리베이터의 지혜')}
+      <path d="M60 100 H540" stroke="${C.ln2}" stroke-width="3"/>
+      ${[14,37,53,65,67,98,122,124,183].map(t => `
+        <circle cx="${60 + t / 199 * 480}" cy="100" r="${t===53?7:4}" fill="${t===53?'#b08ae0':'#56d6cf'}"/>
+        <text x="${60 + t / 199 * 480}" y="${t===53?84:122}" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${t===53?'#b08ae0':'#566578'}">${t}</text>`).join('')}
+      <text x="60" y="84" font-family="monospace" font-size="8" fill="${C.fnt}">트랙 0</text>
+      <text x="540" y="84" text-anchor="end" font-family="monospace" font-size="8" fill="${C.fnt}">199</text>
+      <text x="300" y="150" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.dim}">헤드 53에서 시작 — 요청 8개를 어떤 순서로? (미니랩에서 대결)</text>
+      <rect x="60" y="170" width="225" height="60" rx="6" fill="${C.pan2}" stroke="${C.warn}"/>
+      <text x="172" y="194" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.warn}">FCFS: 온 순서대로</text>
+      <text x="172" y="214" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">헤드가 미친 듯 왕복 — 총 640 트랙</text>
+      <rect x="315" y="170" width="225" height="60" rx="6" fill="${C.pan2}" stroke="${C.grn}"/>
+      <text x="427" y="194" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.grn}">SCAN: 한 방향으로 쓸기</text>
+      <text x="427" y="214" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">엘리베이터처럼 — 총 236 트랙</text>
+      <!-- RAID -->
+      <text x="60" y="268" font-family="monospace" font-size="9" fill="${C.fnt}">RAID — 디스크 여러 장의 조합:</text>
+      ${[['RAID 0', '분산(스트라이프)', '속도↑ · 한 장 죽으면 전멸', 60, C.cyan],
+         ['RAID 1', '미러(복제)', '생존성↑ · 용량 절반', 222, C.grn],
+         ['RAID 5', '패리티 분산', 'XOR로 복구(1편!) · 균형', 384, C.vio]].map(([t, d1, d2, x, col]) => `
+        <rect x="${x}" y="280" width="156" height="66" rx="6" fill="${C.pan2}" stroke="${col}"/>
+        <text x="${x+78}" y="302" text-anchor="middle" font-family="monospace" font-size="9" fill="${col}">${t}</text>
+        <text x="${x+78}" y="318" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.dim}">${d1}</text>
+        <text x="${x+78}" y="334" text-anchor="middle" font-family="monospace" font-size="7" fill="${C.fnt}">${d2}</text>`).join('')}
+      <text x="300" y="380" text-anchor="middle" class="s-label" fill="${C.fnt}">SSD 시대엔 탐색이 없어 스케줄링은 단순해졌지만 — RAID는 여전하다</text>
+    `),
+
+    /* ─── D3.5 보호와 보안 ─── */
+    security: svg(`
+      ${lbl(40, 40, 'PROTECTION · 문지기의 질문')}
+      <rect x="60" y="70" width="200" height="60" rx="6" fill="${C.pan2}" stroke="${C.cyan}"/>
+      <text x="160" y="96" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.cyan}">프로세스 (uid: hyenem)</text>
+      <text x="160" y="116" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">"이 파일 쓰게 해줘"</text>
+      ${arrowR(260, 100, 320, C.cyan)}
+      <rect x="322" y="70" width="120" height="60" rx="6" fill="#221a2e" stroke="${C.vio}"/>
+      <text x="382" y="98" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.vio}">🛡 검문</text>
+      <text x="382" y="116" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">uid vs 권한 비트</text>
+      <path d="M442 88 H500 M442 112 H500" stroke="${C.ln2}" stroke-width="1.5"/>
+      <text x="520" y="92" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.grn}">허가</text>
+      <text x="520" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.warn}">EACCES</text>
+      <!-- rwx 해부 -->
+      <text x="60" y="172" font-family="monospace" font-size="9" fill="${C.fnt}">ls -l 의 암호문 해부:</text>
+      <text x="80" y="200" font-family="monospace" font-size="13" fill="${C.dim}">-</text>
+      ${[['rwx', '소유자', C.grn], ['r-x', '그룹', C.cyan], ['r--', '기타', C.warn]].map(([t, d, col], i) => `
+        <rect x="${96 + i * 86}" y="184" width="76" height="26" rx="4" fill="${C.pan2}" stroke="${col}"/>
+        <text x="${134 + i * 86}" y="201" text-anchor="middle" font-family="monospace" font-size="10" fill="${col}">${t}</text>
+        <text x="${134 + i * 86}" y="228" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">${d}</text>`).join('')}
+      <text x="420" y="201" font-family="monospace" font-size="9" fill="${C.dim}">= 754 (8진수!)</text>
+      <!-- 진화와 원칙 -->
+      ${[['ACL', '사용자별 정밀 목록', 60], ['seccomp', '시스템 콜 다이어트', 222], ['SELinux', '행동 정책 강제', 384]].map(([t, d, x]) => `
+        <rect x="${x}" y="252" width="156" height="52" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
+        <text x="${x+78}" y="274" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.dim}">${t}</text>
+        <text x="${x+78}" y="292" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">${d}</text>`).join('')}
+      <rect x="60" y="324" width="480" height="42" rx="6" fill="#221a2e" stroke="${C.vioD}"/>
+      <text x="300" y="350" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.vio}">대원칙: 최소 권한 — 필요한 만큼만, 잠깐만</text>
+      <text x="300" y="396" text-anchor="middle" class="s-label" fill="${C.fnt}">사고의 공식 = 과한 권한 × 한 번의 실수 — root로 살지 마세요</text>
+    `),
+
+    /* ─── D6 가상머신·컨테이너 ─── */
+    virt: svg(`
+      ${lbl(40, 40, 'VIRTUALIZATION · 컴퓨터 안의 컴퓨터')}
+      <!-- VM 쪽 -->
+      <rect x="56" y="70" width="230" height="270" rx="8" fill="${C.pan2}" stroke="${C.vio}"/>
+      <text x="171" y="94" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.vio}">가상머신 (VM)</text>
+      ${[['앱', '#101a25', 106], ['게스트 커널 (Ring 0인 줄 안다)', '#221a2e', 144], ['하이퍼바이저 — 특권 명령 가로채기', '#1a1426', 182], ['진짜 하드웨어', '#0c121b', 220]].map(([t, f, y]) => `
+        <rect x="70" y="${y}" width="202" height="32" rx="4" fill="${f}" stroke="${C.ln2}"/>
+        <text x="171" y="${y+20}" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.dim}">${t}</text>`).join('')}
+      <text x="171" y="282" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">EPT: 지도의 지도 (이중 페이지 테이블)</text>
+      <text x="171" y="304" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">격리 두꺼움 · 기동 수십 초</text>
+      <!-- 컨테이너 쪽 -->
+      <rect x="314" y="70" width="230" height="270" rx="8" fill="${C.pan2}" stroke="${C.cyan}"/>
+      <text x="429" y="94" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.cyan}">컨테이너</text>
+      ${[['앱 A│앱 B│앱 C — 각자 격리된 시야', '#101a25', 106], ['네임스페이스: 내 PID 1 · 내 루트 · 내 망', '#10262c', 144], ['cgroups: CPU·메모리 할당량', '#10262c', 182], ['공유 커널 하나', '#221a2e', 220]].map(([t, f, y]) => `
+        <rect x="328" y="${y}" width="202" height="32" rx="4" fill="${f}" stroke="${C.ln2}"/>
+        <text x="429" y="${y+20}" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.dim}">${t}</text>`).join('')}
+      <text x="429" y="282" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">부팅 없음 — 프로세스일 뿐</text>
+      <text x="429" y="304" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">격리 얇음 · 기동 ms</text>
+      <text x="300" y="372" text-anchor="middle" class="s-label" fill="${C.fnt}">하드웨어를 속이거나(VM) 커널의 시야를 속이거나(컨테이너) — 클라우드의 두 기둥</text>
+      <text x="300" y="398" text-anchor="middle" class="s-label" fill="${C.fnt}">"OS도 ISA 위의 프로그램"이라서 가능한 마법</text>
     `),
   };
 

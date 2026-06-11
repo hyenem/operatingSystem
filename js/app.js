@@ -140,6 +140,7 @@
     ['경쟁 상태', 'race'], ['임계 구역', 'lock'], ['뮤텍스', 'lock'], ['데드락', 'deadlock'],
     ['페이지 폴트', 'pagefault'], ['교체 정책', 'swap'], ['스왑', 'swap'], ['fork', 'lifecycle'], ['좀비', 'lifecycle'],
     ['파이프', 'ipc'], ['시그널', 'ipc'], ['inode', 'inode'], ['페이지 캐시', 'inode'], ['부팅', 'boot'], ['PID 1', 'boot'],
+    ['세마포어', 'semaphore'], ['조건변수', 'semaphore'], ['단편화', 'allocation'], ['RAID', 'diskio'], ['최소 권한', 'security'], ['컨테이너', 'virt'], ['가상머신', 'virt'], ['네임스페이스', 'virt'],
     ['커널', 'kernel'],
   ];
   // 부모 맵으로 노드까지의 경로 계산

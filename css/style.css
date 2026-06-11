@@ -1267,3 +1267,38 @@ body::before {
   transition: all .2s;
 }
 .pol-f--new { border-style: solid; border-color: var(--green); color: var(--green); box-shadow: 0 0 10px rgba(134,230,162,.4); }
+
+/* 간트 랩 */
+.gnt-bar { display: flex; gap: 2px; height: 40px; margin-bottom: 10px; }
+.gnt-seg {
+  display: grid; place-items: center; border: 1px solid; border-radius: 4px;
+  font-family: var(--mono); font-size: 11px; min-width: 24px;
+}
+.gnt-seg small { font-size: 8px; opacity: .7; }
+.gnt-stats { font-family: var(--mono); font-size: 11px; color: var(--dim); text-align: center; margin-bottom: 8px; }
+.gnt-stats b { color: var(--gold); font-size: 14px; }
+
+/* 철학자 랩 */
+.ph-row { display: flex; gap: 5px; }
+.ph-row--fk { opacity: .85; }
+.ph-cell, .ph-fk {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-family: var(--mono); font-size: 9px; color: var(--dim);
+  border: 1px solid var(--line-2); border-radius: var(--r); padding: 6px 2px;
+  transition: all .2s;
+}
+.ph-cell b, .ph-fk b { font-size: 8.5px; color: var(--ink); font-weight: 500; text-align: center; }
+.ph-dead { border-color: #c0654a; } .ph-dead b { color: #e0916f; }
+.ph-eat { border-color: var(--green); } .ph-eat b { color: var(--green); }
+
+/* 단편화 랩 */
+.frag-bar { display: flex; gap: 2px; margin-bottom: 12px; }
+.frag-c {
+  flex: 1; height: 34px; display: grid; place-items: center;
+  font-family: var(--mono); font-size: 10px; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 3px; transition: all .2s;
+}
+.frag-fail { border-color: #c0654a; animation: throb 1s ease 2; }
+
+/* SCAN 랩 */
+.scan-svg { display: block; width: 100%; border: 1px solid var(--line-2); border-radius: 6px; background: var(--bg); margin-bottom: 10px; }
