@@ -475,11 +475,45 @@
   // ── 이벤트 ────────────────────────────────────────────────
   btnBack.addEventListener('click', goUp);
   btnHome.addEventListener('click', goHome);
+  // ── ⚙ 설정: 애니메이션 토글 · 진행률 초기화 · 안내 ───────
+  const ANIM_KEY = 'os_anim_off';
+  function applyAnim() {
+    let off = false;
+    try { off = localStorage.getItem(ANIM_KEY) === '1'; } catch (e) {}
+    document.body.classList.toggle('no-anim', off);
+    return off;
+  }
   btnSettings.addEventListener('click', () => {
-    btnSettings.classList.add('btn--pulse');
-    setTimeout(() => btnSettings.classList.remove('btn--pulse'), 400);
-    stageHint.textContent = '⚙ 표현 모드 · 언어 설정은 다음 업데이트에서 열립니다';
+    const off = applyAnim();
+    const ov = document.createElement('div');
+    ov.className = 'intro';
+    ov.innerHTML = `
+      <div class="intro__card">
+        <h2 class="intro__title" style="font-size:20px">⚙ 설정</h2>
+        <div class="set-rows">
+          <button class="quiz__opt" data-set="anim">✨ 도식 애니메이션: <b>${off ? '꺼짐' : '켜짐'}</b> — 누르면 전환</button>
+          <button class="quiz__opt" data-set="reset">🗺 탐험 진행률 초기화 (현재 ${visited.size}/${TOTAL})</button>
+          <button class="quiz__opt" data-set="intro">📖 처음 안내 다시 보기</button>
+        </div>
+        <button class="intro__btn" style="margin-top:18px">닫기</button>
+      </div>`;
+    document.body.appendChild(ov);
+    const close = () => ov.remove();
+    ov.querySelector('.intro__btn').addEventListener('click', close);
+    ov.addEventListener('click', (e) => { if (e.target === ov) close(); });
+    ov.querySelector('[data-set="anim"]').addEventListener('click', () => {
+      try { localStorage.setItem(ANIM_KEY, off ? '0' : '1'); } catch (e) {}
+      applyAnim(); close();
+    });
+    ov.querySelector('[data-set="reset"]').addEventListener('click', () => {
+      try { localStorage.removeItem('os_visited'); localStorage.removeItem('os_done'); } catch (e) {}
+      visited = new Set([ROOT]);
+      try { localStorage.setItem('os_visited', JSON.stringify([...visited])); } catch (e) {}
+      renderChrome(); close();
+    });
+    ov.querySelector('[data-set="intro"]').addEventListener('click', () => { close(); showIntro(); });
   });
+  applyAnim();
   document.addEventListener('keydown', (e) => {
     if (mapEl) { // 지도 열림: Esc로 닫기만
       if (e.key === 'Escape') { e.preventDefault(); closeMap(); }

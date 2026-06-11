@@ -1303,3 +1303,10 @@ body::before {
 
 /* SCAN 랩 */
 .scan-svg { display: block; width: 100%; border: 1px solid var(--line-2); border-radius: 6px; background: var(--bg); margin-bottom: 10px; }
+
+
+/* ⚙ 설정 + 애니메이션 끄기 */
+.set-rows { display: grid; gap: 8px; text-align: left; }
+.set-rows b { color: var(--gold); }
+.no-anim * { animation: none !important; }
+.no-anim .scene circle:has(> animateMotion) { display: none; }
