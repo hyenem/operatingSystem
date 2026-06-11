@@ -138,6 +138,7 @@
     ['스케줄러', 'sched'], ['드라이버', 'driver'], ['모드 전환', 'trap'],
     ['주소 공간', 'addrspace'], ['스레드', 'threads'], ['프로세스', 'process'],
     ['경쟁 상태', 'race'], ['임계 구역', 'lock'], ['뮤텍스', 'lock'], ['데드락', 'deadlock'],
+    ['페이지 폴트', 'pagefault'], ['교체 정책', 'swap'], ['스왑', 'swap'], ['fork', 'lifecycle'], ['좀비', 'lifecycle'],
     ['커널', 'kernel'],
   ];
   // 부모 맵으로 노드까지의 경로 계산

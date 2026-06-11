@@ -170,6 +170,114 @@ const LABS = {
     btn.addEventListener('click', () => { si = si >= seq.length - 1 ? -1 : si + 1; paint(); });
   },
 
+  /* ── fork: 분신술 한 번의 드라마 ── */
+  forklab(el) {
+    const STEPS = [
+      { p: 'fork() 호출!', c: '— (아직 없음)', cap: '부모(PID 100)가 분신술을 시전합니다.' },
+      { p: 'fork → 101 반환', c: '✦ 탄생! fork → 0 반환', cap: '커널이 복제(CoW — 지도만!). <b>같은 코드의 다음 줄</b>에서 둘 다 깨어나는데 — 부모는 자식 PID(101)를, 자식은 0을 받습니다. 반환값 하나로 "내가 본체인가 분신인가"를 압니다.' },
+      { p: 'wait(101) — 대기', c: 'exec("game") — 변신!', cap: '자식이 exec로 몸(코드·데이터)을 game으로 통째 교체 — PID는 그대로. 부모는 wait로 자식의 끝을 기다립니다.' },
+      { p: '대기 zzz', c: 'game 실행 중…', cap: '복제(fork)와 변신(exec)을 분리한 덕에 — 그 사이에 파이프 연결, 권한 낮추기 같은 준비를 끼울 수 있습니다. 유닉스 설계의 묘미.' },
+      { p: '대기 zzz', c: 'exit(0) → 💀 좀비', cap: '자식이 종료 — 하지만 즉시 소멸하지 않습니다. <b>종료 코드를 품은 좀비</b>로 남아 부모의 수거를 기다립니다.' },
+      { p: 'wait → 0 수거 ✓', c: '(소멸)', cap: '부모가 종료 코드를 수거하는 순간 좀비가 사라집니다. 부모가 wait를 안 하면? — 좀비가 쌓입니다. 부모가 먼저 죽으면? — init(PID 1)이 고아를 입양해 대신 수거합니다.' },
+    ];
+    let si = -1;
+    el.innerHTML = `
+      <div class="lab lab--fork">
+        <div class="cc-view">
+          <div class="cc-row"><span class="cc-name" style="color:#56d6cf">부모<br>100</span><b class="cc-st" data-c="p">—</b></div>
+          <div class="cc-row"><span class="cc-name" style="color:#b08ae0">자식<br>101</span><b class="cc-st" data-c="c">—</b></div>
+        </div>
+        <button class="st-next cc-btn">▸ 다음 장면</button>
+        <p class="lab__caption">fork 한 번의 드라마 — 탄생부터 수거까지.</p>
+      </div>`;
+    const btn = el.querySelector('.cc-btn');
+    const cap = el.querySelector('.lab__caption');
+    const C = (k) => el.querySelector(`[data-c="${k}"]`);
+    btn.addEventListener('click', () => {
+      si = si >= STEPS.length - 1 ? -1 : si + 1;
+      const s = si < 0 ? { p: '—', c: '—' } : STEPS[si];
+      C('p').textContent = s.p; C('c').textContent = s.c;
+      cap.innerHTML = si < 0 ? 'fork 한 번의 드라마 — 탄생부터 수거까지.' : s.cap;
+      btn.textContent = si >= STEPS.length - 1 ? '↻ 처음부터' : '▸ 다음 장면';
+    });
+  },
+
+  /* ── 교체 정책 대결: 같은 접근 순서, FIFO vs LRU ── */
+  policylab(el) {
+    const REF = [1, 2, 3, 1, 2, 4, 1, 2, 5, 3];
+    const NF = 3;
+    function simulate(alg) {
+      const steps = []; const frames = []; const meta = []; let faults = 0;
+      REF.forEach((p, t) => {
+        let fault = false, evicted = null;
+        const idx = frames.indexOf(p);
+        if (idx === -1) {
+          fault = true; faults++;
+          if (frames.length < NF) { frames.push(p); meta.push(t); }
+          else {
+            let vi = 0;
+            if (alg === 'FIFO') vi = meta.indexOf(Math.min(...meta));
+            else vi = meta.indexOf(Math.min(...meta)); // LRU: meta=마지막 사용 시각
+            evicted = frames[vi]; frames[vi] = p; meta[vi] = t;
+          }
+        } else if (alg === 'LRU') meta[idx] = t;
+        steps.push({ ref: p, frames: frames.slice(), fault, evicted, faults });
+      });
+      return steps;
+    }
+    const TOTAL = { FIFO: simulate('FIFO').at(-1).faults, LRU: simulate('LRU').at(-1).faults };
+    let alg = null, steps = null, si = -1;
+
+    el.innerHTML = `
+      <div class="lab lab--policy">
+        <div class="lab__tabs">
+          <button class="lab__tab" data-a="FIFO">FIFO로 돌리기</button>
+          <button class="lab__tab" data-a="LRU">LRU로 돌리기</button>
+        </div>
+        <div class="pol-ref">${REF.map((p, i) => `<span class="pol-r" data-r="${i}">${p}</span>`).join('')}</div>
+        <div class="pol-frames">${Array.from({ length: NF }, (_, i) => `<span class="pol-f" data-f="${i}">·</span>`).join('')}</div>
+        <div class="cc-mem">폴트 <b data-c="faults">0</b> 회</div>
+        <button class="st-next cc-btn" disabled>▸ 다음 접근</button>
+        <p class="lab__caption">정책을 고르고, 페이지 접근 순서(위 띠)를 한 칸씩 진행해 보세요. 프레임은 3칸!</p>
+      </div>`;
+    const tabs = el.querySelectorAll('.lab__tab');
+    const btn = el.querySelector('.cc-btn');
+    const cap = el.querySelector('.lab__caption');
+    const C = (k) => el.querySelector(`[data-c="${k}"]`);
+    function paint() {
+      el.querySelectorAll('.pol-r').forEach((r, i) => {
+        r.classList.toggle('pol-r--on', i === si);
+        r.classList.toggle('pol-r--done', i < si);
+      });
+      const s = si < 0 ? { frames: [], faults: 0 } : steps[si];
+      el.querySelectorAll('.pol-f').forEach((f, i) => {
+        f.textContent = s.frames[i] != null ? s.frames[i] : '·';
+        f.classList.toggle('pol-f--new', si >= 0 && s.fault && s.frames[i] === steps[si].ref);
+      });
+      C('faults').textContent = s.faults;
+      if (si < 0) return;
+      if (si >= steps.length - 1) {
+        const other = alg === 'FIFO' ? 'LRU' : 'FIFO';
+        cap.innerHTML = `<b>${alg} 최종: 폴트 ${s.faults}회</b> — 참고로 ${other}는 ${TOTAL[other]}회. ` +
+          (TOTAL[alg] <= TOTAL[other] ? '이번 순서에선 이쪽이 승!' : `${other}가 더 적습니다 — 직접 돌려 확인해 보세요.`);
+        btn.textContent = '↻ 처음부터';
+      } else {
+        cap.innerHTML = s.fault
+          ? `페이지 <b>${steps[si].ref}</b> 접근 → <b class="zero">폴트!</b>` + (s.evicted ? ` ${s.evicted}를 추방하고 입주` : ' 빈 칸에 입주')
+          : `페이지 <b>${steps[si].ref}</b> 접근 → <b class="one">적중</b> — 이미 RAM에` + (alg === 'LRU' ? ' (최근 사용 갱신!)' : '');
+        btn.textContent = '▸ 다음 접근';
+      }
+    }
+    tabs.forEach(t => t.addEventListener('click', () => {
+      alg = t.dataset.a; steps = simulate(alg); si = -1;
+      tabs.forEach(x => x.classList.toggle('lab__tab--on', x === t));
+      btn.disabled = false; btn.textContent = '▸ 다음 접근';
+      cap.innerHTML = `<b>${alg}</b> 선택 — ${alg === 'FIFO' ? '들어온 지 가장 오래된 페이지를 추방' : '안 쓰인 지 가장 오래된 페이지를 추방'}. 진행하세요!`;
+      paint();
+    }));
+    btn.addEventListener('click', () => { si = si >= steps.length - 1 ? -1 : si + 1; paint(); });
+  },
+
   /* ── strace: 시스템 콜 한 번의 왕복을 한 단계씩 ── */
   strace(el) {
     const STEPS = [

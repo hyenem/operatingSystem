@@ -1245,3 +1245,25 @@ body::before {
 .st-step--on { color: var(--gold); border-color: var(--gold); background: rgba(176,138,224,.1); }
 .st-step--done { color: var(--green); border-color: #3f7a52; opacity: .65; }
 .st-sep { color: var(--faint); font-size: 9px; }
+
+/* fork 랩 */
+.lab--fork .cc-name { width: 34px; font-size: 9px; line-height: 1.3; }
+
+/* 교체 정책 랩 */
+.pol-ref { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+.pol-r {
+  width: 26px; height: 26px; display: grid; place-items: center;
+  font-family: var(--mono); font-size: 11px; border-radius: var(--r);
+  color: var(--faint); background: var(--bg); border: 1px solid var(--line);
+  transition: all .15s;
+}
+.pol-r--on { color: var(--gold); border-color: var(--gold); }
+.pol-r--done { color: var(--dim); opacity: .55; }
+.pol-frames { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+.pol-f {
+  width: 44px; height: 44px; display: grid; place-items: center;
+  font-family: var(--mono); font-size: 15px; border-radius: var(--r);
+  color: var(--ink); background: var(--bg); border: 1px dashed var(--line-2);
+  transition: all .2s;
+}
+.pol-f--new { border-style: solid; border-color: var(--green); color: var(--green); box-shadow: 0 0 10px rgba(134,230,162,.4); }

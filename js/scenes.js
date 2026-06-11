@@ -43,9 +43,11 @@
     /* ─── D0 프로세스: 우주의 전경 ─── */
     process: svg(`
       <rect x="40" y="30" width="520" height="360" rx="12" fill="${C.pan}" stroke="${C.vio}" stroke-width="1.5"/>
-      <rect x="40" y="30" width="520" height="34" rx="12" fill="${C.pan2}"/>
-      <circle cx="62" cy="47" r="5" fill="${C.warn}"/><circle cx="80" cy="47" r="5" fill="${C.vio}"/><circle cx="98" cy="47" r="5" fill="${C.grn}"/>
-      <text x="300" y="52" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.dim}">myapp — 실행 중 (PID 1234)</text>
+      ${hot('lifecycle', '이 우주는 어떻게 태어났나',
+        `<rect class="hot__shape" x="40" y="30" width="520" height="34" rx="12" fill="${C.pan2}"/>
+         <circle cx="62" cy="47" r="5" fill="${C.warn}"/><circle cx="80" cy="47" r="5" fill="${C.vio}"/><circle cx="98" cy="47" r="5" fill="${C.grn}"/>
+         <text x="300" y="52" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.dim}">myapp — 실행 중 (PID 1234)</text>`,
+        470, 52)}
 
       ${hot('addrspace', '주소 공간',
         `<rect class="hot__shape" x="64" y="84" width="150" height="240" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
@@ -369,14 +371,18 @@
         return s;
       })()}
       <text x="180" y="312" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">바늘이 돌며 "최근에 쓰였나?" 검사 — 세컨드 찬스</text>
-      <rect x="360" y="100" width="180" height="76" rx="6" fill="${C.pan2}" stroke="${C.warn}"/>
-      <text x="450" y="130" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.warn}">💾 스왑 (디스크)</text>
-      <text x="450" y="152" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">쫓겨난 페이지의 유배지</text>
+      ${hot('swap', '교체의 방',
+        `<rect class="hot__shape" x="360" y="100" width="180" height="76" rx="6" fill="${C.pan2}" stroke="${C.warn}"/>
+         <text x="450" y="130" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.warn}">💾 스왑 (디스크)</text>
+         <text x="450" y="152" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">쫓겨난 페이지의 유배지</text>`,
+        450, 90, 'middle')}
       ${flow('M268 160 Q320 130 360 130', C.warn, 1, 2.2, 2.5)}
-      <rect x="360" y="208" width="180" height="100" rx="6" fill="${C.pan2}" stroke="${C.grn}"/>
-      <text x="450" y="234" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.grn}">CoW — 복사한 척</text>
-      <text x="450" y="258" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">fork() → 지도만 복사</text>
-      <text x="450" y="276" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">정말 쓸 때만 진짜 복사</text>
+      ${hot('pagefault', '폴트의 갈림길',
+        `<rect class="hot__shape" x="360" y="218" width="180" height="90" rx="6" fill="${C.pan2}" stroke="${C.grn}"/>
+         <text x="450" y="244" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.grn}">⑂ "지도에 없음!"</text>
+         <text x="450" y="266" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">요구 페이징? CoW?</text>
+         <text x="450" y="284" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">아니면 segfault?</text>`,
+        450, 332, 'middle')}
       <text x="300" y="368" text-anchor="middle" class="s-label" fill="${C.fnt}">1편의 MMU가 지도를 "읽는" 쪽이라면, 여기는 지도를 "그리는" 쪽</text>
     `),
 
@@ -473,6 +479,99 @@
         <rect x="${x - 36}" y="300" width="${t.length > 5 ? 96 : 86}" height="40" rx="5" fill="${C.pan2}" stroke="${C.ln2}"/>
         <text x="${x + (t.length > 5 ? 12 : 7)}" y="325" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.dim}">${t}</text>`).join('')}
       <text x="300" y="396" text-anchor="middle" class="s-label" fill="${C.fnt}">운영체제란 — 전기 위에 세운 질서. 그 전기의 이야기는 1편에서. ⦿</text>
+    `),
+
+    /* ─── D1 생애주기: fork→exec→zombie + 상태 전이 ─── */
+    lifecycle: svg(`
+      ${lbl(40, 40, 'LIFECYCLE · 분신술과 변신술')}
+      <rect x="56" y="62" width="130" height="48" rx="6" fill="${C.pan2}" stroke="${C.cyan}"/>
+      <text x="121" y="84" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.cyan}">부모 (PID 100)</text>
+      <text x="121" y="100" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">fork() 호출!</text>
+      <path d="M186 86 H250" stroke="${C.cyan}" stroke-width="2"/>
+      <path d="M150 110 Q180 150 220 158" fill="none" stroke="${C.vio}" stroke-width="2"/>
+      ${flow('M152 110 Q180 150 218 156', C.vio, 1, 1.8, 2.5)}
+      <rect x="250" y="62" width="140" height="48" rx="6" fill="${C.pan2}" stroke="${C.cyan}"/>
+      <text x="320" y="84" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.cyan}">부모: fork → 101 받음</text>
+      <text x="320" y="100" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">→ wait(101) 대기</text>
+      <rect x="220" y="158" width="150" height="48" rx="6" fill="#221a2e" stroke="${C.vio}"/>
+      <text x="295" y="180" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.vio}">자식 (PID 101) 탄생!</text>
+      <text x="295" y="196" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">fork → 0 받음 (분신 식별)</text>
+      <path d="M370 182 H430" stroke="${C.vio}" stroke-width="2"/>
+      <text x="400" y="174" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.vioD}">exec!</text>
+      <rect x="432" y="158" width="120" height="48" rx="6" fill="#16301f" stroke="${C.grn}"/>
+      <text x="492" y="180" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.grn}">"game" 으로 변신</text>
+      <text x="492" y="196" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">몸 교체, PID 유지</text>
+      <path d="M492 206 V240" stroke="${C.grn}" stroke-width="1.5"/>
+      <rect x="432" y="242" width="120" height="44" rx="6" fill="#1a1426" stroke="${C.warn}"/>
+      <text x="492" y="262" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.warn}">exit(0) → 💀 좀비</text>
+      <text x="492" y="278" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">종료 코드 품고 대기</text>
+      <path d="M432 264 Q330 264 320 116" fill="none" stroke="${C.warn}" stroke-width="1.5" stroke-dasharray="4 3"/>
+      ${flow('M430 264 Q330 264 322 118', C.warn, 1, 2.4, 2)}
+      <text x="350" y="250" font-family="monospace" font-size="8" fill="${C.warn}">wait가 수거 → 소멸</text>
+      <!-- 상태 전이 -->
+      <text x="60" y="324" font-family="monospace" font-size="9" fill="${C.fnt}">살아 있는 동안의 다섯 상태:</text>
+      ${[['생성', 80, C.fnt], ['준비', 185, C.cyan], ['실행', 290, C.grn], ['대기', 395, C.warn], ['좀비', 500, C.vio]].map(([t, x, col], i) => `
+        <circle cx="${x}" cy="362" r="24" fill="${C.pan2}" stroke="${col}" stroke-width="1.5"/>
+        <text x="${x}" y="367" text-anchor="middle" font-family="monospace" font-size="9" fill="${col}">${t}</text>
+        ${i < 4 ? `<path d="M${x + 24} 362 H${x + 81}" stroke="${C.ln2}" stroke-width="1.5"/>` : ''}`).join('')}
+      <path d="M290 338 Q237 318 185 338" fill="none" stroke="${C.ln2}" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <text x="237" y="322" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">타이머! (선점)</text>
+      ${flow('M209 362 H266', C.cyan, 1, 1.6, 2)}
+    `),
+
+    /* ─── D4.3 페이지 폴트 갈림길 ─── */
+    pagefault: svg(`
+      ${lbl(40, 40, 'PAGE FAULT · 커널의 심문')}
+      <rect x="200" y="60" width="200" height="46" rx="6" fill="${C.pan2}" stroke="${C.cyan}"/>
+      <text x="300" y="82" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.cyan}">MMU: "지도에 없음!" ⚡</text>
+      <text x="300" y="98" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">(1편에서 본 그 예외)</text>
+      <path d="M300 106 V136" stroke="${C.ln2}" stroke-width="2"/>
+      <rect x="210" y="138" width="180" height="42" rx="6" fill="#221a2e" stroke="${C.vio}"/>
+      <text x="300" y="164" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.vio}">커널: 이 접근, 합법인가?</text>
+      ${flow('M300 108 V136', C.cyan, 1, 1.2, 2.5)}
+      <path d="M250 180 Q140 200 120 230 M300 180 V230 M350 180 Q460 200 480 230" fill="none" stroke="${C.ln2}" stroke-width="1.5"/>
+      <rect x="46" y="232" width="150" height="92" rx="6" fill="#16301f" stroke="${C.grn}"/>
+      <text x="121" y="256" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.grn}">① 아직 안 가져옴</text>
+      <text x="121" y="276" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">디스크에서 적재</text>
+      <text x="121" y="292" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">→ 재시도 ✓</text>
+      <text x="121" y="312" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">요구 페이징 — 일상!</text>
+      <rect x="225" y="232" width="150" height="92" rx="6" fill="#10262c" stroke="${C.cyan}"/>
+      <text x="300" y="256" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.cyan}">② CoW에 쓰기</text>
+      <text x="300" y="276" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">지금 진짜 복사</text>
+      <text x="300" y="292" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">→ 재시도 ✓</text>
+      <text x="300" y="312" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">fork의 약속 이행</text>
+      <rect x="404" y="232" width="150" height="92" rx="6" fill="#1a1426" stroke="${C.warn}"/>
+      <text x="479" y="256" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.warn}">③ 불법 접근</text>
+      <text x="479" y="276" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">segfault 신호</text>
+      <text x="479" y="292" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">→ 프로세스 사형 💀</text>
+      <text x="479" y="312" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">널 포인터의 최후</text>
+      <text x="300" y="368" text-anchor="middle" class="s-label" fill="${C.fnt}">폴트의 대부분은 사고가 아니라 설계 — 게으른 적재가 기본 전략</text>
+      <text x="300" y="392" text-anchor="middle" class="s-label" fill="${C.fnt}">같은 메커니즘(예외) 하나로 일상·약속 이행·보호를 전부 처리한다</text>
+    `),
+
+    /* ─── D4.6 교체 정책 · 스왑 ─── */
+    swap: svg(`
+      ${lbl(40, 40, 'PAGE REPLACEMENT · 누구를 내보낼까')}
+      <text x="70" y="84" font-family="monospace" font-size="9" fill="${C.fnt}">RAM (꽉 참):</text>
+      ${[['P·코드', C.cyan], ['P·힙', C.grn], ['브라우저', C.vio]].map(([t, col], i) => `
+        <rect x="${70 + i * 120}" y="96" width="104" height="44" rx="5" fill="${C.pan2}" stroke="${col}"/>
+        <text x="${122 + i * 120}" y="122" text-anchor="middle" font-family="monospace" font-size="9" fill="${col}">${t}</text>`).join('')}
+      <rect x="450" y="96" width="104" height="44" rx="5" fill="#1a1426" stroke="${C.warn}" stroke-width="2"/>
+      <text x="502" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.warn}">새 페이지가</text>
+      <text x="502" y="132" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.warn}">들어와야 함!</text>
+      <path d="M190 140 V190" stroke="${C.warn}" stroke-width="2" stroke-dasharray="4 3"/>
+      ${flow('M190 142 V188', C.warn, 1, 1.6, 2.5)}
+      <text x="206" y="170" font-family="monospace" font-size="8" fill="${C.warn}">희생자 선정…</text>
+      <rect x="120" y="192" width="140" height="48" rx="6" fill="${C.pan2}" stroke="${C.warn}"/>
+      <text x="190" y="214" text-anchor="middle" font-family="monospace" font-size="9" fill="${C.warn}">💾 스왑으로 추방</text>
+      <text x="190" y="230" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">디스크 = 수백만 배 느림</text>
+      <!-- 정책 비교 -->
+      ${[['FIFO', '들어온 지 가장 오래', '단순, 가끔 엉뚱한 추방', 60, C.cyan], ['LRU', '안 쓰인 지 가장 오래', '좋지만 기록 비용 큼', 246, C.grn], ['Clock', 'LRU의 값싼 근사', '실제 OS의 선택', 432, C.vio]].map(([t, d1, d2, x, col]) => `
+        <rect x="${x}" y="268" width="166" height="78" rx="6" fill="${C.pan2}" stroke="${col}"/>
+        <text x="${x + 83}" y="292" text-anchor="middle" font-family="monospace" font-size="10" fill="${col}">${t}</text>
+        <text x="${x + 83}" y="312" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.dim}">${d1}</text>
+        <text x="${x + 83}" y="330" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">${d2}</text>`).join('')}
+      <text x="300" y="384" text-anchor="middle" class="s-label" fill="${C.fnt}">아래 미니랩에서 FIFO와 LRU의 폴트 수를 직접 겨뤄 보세요</text>
     `),
   };
 
