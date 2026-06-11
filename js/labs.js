@@ -278,6 +278,39 @@ const LABS = {
     btn.addEventListener('click', () => { si = si >= steps.length - 1 ? -1 : si + 1; paint(); });
   },
 
+  /* ── 파이프: 셸이 ls | grep 배관을 까는 법 ── */
+  pipelab(el) {
+    const STEPS = [
+      { sh: 'pipe() 호출', c1: '—', c2: '—', cap: '셸이 커널에 관 하나를 부탁합니다 → 읽기끝(fd3)·쓰기끝(fd4) 번호표 두 장을 받습니다.' },
+      { sh: 'fork() ×2', c1: '✦ 탄생 (관 상속)', c2: '✦ 탄생 (관 상속)', cap: '자식 둘을 만듭니다 — fork는 열린 파일을 물려주므로, 둘 다 관의 양끝을 쥐고 태어납니다.' },
+      { sh: '대기', c1: '쓰기끝 → 내 stdout', c2: '—', cap: '자식1: dup2(fd4, 1) — "내 표준 출력은 이제 관이다". 화면 대신 관으로 쏟아지게 배선 변경.' },
+      { sh: '대기', c1: 'exec("ls")', c2: '읽기끝 → 내 stdin', cap: '자식2: dup2(fd3, 0) — "내 표준 입력은 이제 관이다". 그리고 자식1은 ls로 변신.' },
+      { sh: '대기', c1: 'ls 실행 → 관으로 출력', c2: 'exec("grep") → 관에서 읽기', cap: '<b>핵심</b>: ls도 grep도 그냥 fd1에 쓰고 fd0에서 읽을 뿐 — 관인지 화면인지 모릅니다. "모든 것은 파일"의 마법.' },
+      { sh: 'wait ×2 → 완료 ✓', c1: '종료', c2: '종료', cap: '<b>ls | grep 완성.</b> 프로그램 한 줄 안 고치고 배관만 바꿔 연결 — fork/exec 분리 + 파일 추상화의 합작품입니다.' },
+    ];
+    let si = -1;
+    el.innerHTML = `
+      <div class="lab lab--pipe2">
+        <div class="cc-view">
+          <div class="cc-row"><span class="cc-name" style="color:#86e6a2">셸</span><b class="cc-st" data-c="sh">—</b></div>
+          <div class="cc-row"><span class="cc-name" style="color:#56d6cf">자식1</span><b class="cc-st" data-c="c1">—</b></div>
+          <div class="cc-row"><span class="cc-name" style="color:#b08ae0">자식2</span><b class="cc-st" data-c="c2">—</b></div>
+        </div>
+        <button class="st-next cc-btn">▸ 다음 장면</button>
+        <p class="lab__caption">셸에 <b>ls | grep</b>을 친 순간 — 배관 공사를 따라가 보세요.</p>
+      </div>`;
+    const btn = el.querySelector('.cc-btn');
+    const cap = el.querySelector('.lab__caption');
+    const C = (k) => el.querySelector(`[data-c="${k}"]`);
+    btn.addEventListener('click', () => {
+      si = si >= STEPS.length - 1 ? -1 : si + 1;
+      const s = si < 0 ? { sh: '—', c1: '—', c2: '—' } : STEPS[si];
+      C('sh').textContent = s.sh; C('c1').textContent = s.c1; C('c2').textContent = s.c2;
+      cap.innerHTML = si < 0 ? '셸에 <b>ls | grep</b>을 친 순간 — 배관 공사를 따라가 보세요.' : s.cap;
+      btn.textContent = si >= STEPS.length - 1 ? '↻ 처음부터' : '▸ 다음 장면';
+    });
+  },
+
   /* ── strace: 시스템 콜 한 번의 왕복을 한 단계씩 ── */
   strace(el) {
     const STEPS = [

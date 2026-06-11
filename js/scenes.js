@@ -260,40 +260,52 @@
       ${flow('M136 282 Q200 300 240 320', C.vio, 1, 1.8, 2.5)}
     `),
 
-    /* ─── D3 커널: 플로어플랜 ─── */
+    /* ─── D3 커널: 플로어플랜 (6방) ─── */
     kernel: svg(`
       <rect x="50" y="36" width="500" height="350" rx="10" fill="#100b18" stroke="${C.vio}" stroke-width="1.5"/>
-      ${lbl(66, 62, 'THE KERNEL · Ring 0 플로어플랜')}
+      ${lbl(66, 60, 'THE KERNEL · Ring 0 플로어플랜')}
       ${hot('sched', '스케줄러',
-        `<rect class="hot__shape" x="72" y="80" width="220" height="120" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
-         ${[0,1,2].map(i => `<rect x="${88+i*52}" y="108" width="44" height="26" rx="3" fill="${C.pan}" stroke="${C.cyanD}"/>
-           <text x="${110+i*52}" y="125" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.cyan}">P${i+1}</text>`).join('')}
-         <text x="106" y="160" font-family="monospace" font-size="8" fill="${C.fnt}">런큐 →</text>
-         <rect x="236" y="146" width="40" height="28" rx="3" fill="${C.metal}" stroke="${C.vio}"/>
-         <text x="256" y="164" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.vio}">CPU</text>
-         ${flow('M132 158 H236', C.cyan, 2, 1.8, 2)}`,
-        182, 218, 'middle')}
+        `<rect class="hot__shape" x="66" y="74" width="150" height="124" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
+         ${[0,1,2].map(i => `<rect x="${80+i*40}" y="96" width="32" height="20" rx="3" fill="${C.pan}" stroke="${C.cyanD}"/>`).join('')}
+         <rect x="120" y="130" width="40" height="26" rx="3" fill="${C.metal}" stroke="${C.vio}"/>
+         <text x="140" y="147" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.vio}">CPU</text>
+         ${flow('M96 106 H120 V130', C.cyan, 1, 1.8, 2)}
+         <text x="141" y="178" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">CPU 시간 분배</text>`,
+        141, 216, 'middle')}
       ${hot('memmgr', '메모리 관리자',
-        `<rect class="hot__shape" x="308" y="80" width="220" height="120" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
-         ${[0,1,2,3,4,5].map(i => `<rect x="${326+(i%3)*60}" y="${102+Math.floor(i/3)*38}" width="48" height="28" rx="3" fill="${i===4?'#16301f':C.pan}" stroke="${i===4?C.grn:C.ln2}"/>`).join('')}
-         <text x="418" y="184" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">페이지 프레임 분배</text>`,
-        418, 218, 'middle')}
+        `<rect class="hot__shape" x="226" y="74" width="150" height="124" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
+         ${[0,1,2,3,4,5].map(i => `<rect x="${244+(i%3)*40}" y="${94+Math.floor(i/3)*30}" width="32" height="22" rx="3" fill="${i===4?'#16301f':C.pan}" stroke="${i===4?C.grn:C.ln2}"/>`).join('')}
+         <text x="301" y="178" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">프레임 분배·교체</text>`,
+        301, 216, 'middle')}
       ${hot('vfs', '파일시스템',
-        `<rect class="hot__shape" x="72" y="240" width="220" height="110" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
-         <text x="110" y="272" font-family="monospace" font-size="9" fill="${C.dim}">/</text>
-         <path d="M116 268 L150 288 M116 268 L150 308" stroke="${C.ln2}"/>
-         <text x="156" y="292" font-family="monospace" font-size="9" fill="${C.dim}">home/</text>
-         <text x="156" y="312" font-family="monospace" font-size="9" fill="${C.dim}">etc/</text>
-         <text x="230" y="300" font-family="monospace" font-size="8" fill="${C.fnt}">"모든 것은 파일"</text>`,
-        182, 374, 'middle')}
+        `<rect class="hot__shape" x="386" y="74" width="150" height="124" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
+         <text x="410" y="104" font-family="monospace" font-size="9" fill="${C.dim}">/</text>
+         <path d="M416 100 L444 116 M416 100 L444 136" stroke="${C.ln2}"/>
+         <text x="450" y="120" font-family="monospace" font-size="8" fill="${C.dim}">home/</text>
+         <text x="450" y="140" font-family="monospace" font-size="8" fill="${C.dim}">etc/</text>
+         <text x="461" y="178" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">"모든 것은 파일"</text>`,
+        461, 216, 'middle')}
       ${hot('driver', '드라이버',
-        `<rect class="hot__shape" x="308" y="240" width="220" height="110" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
-         ${[['디스크',332],['키보드',398],['NIC',464]].map(([t,x]) => `
-           <rect x="${x}" y="262" width="56" height="26" rx="3" fill="${C.pan}" stroke="${C.cyanD}"/>
-           <text x="${x+28}" y="279" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.cyan}">${t}</text>
-           <path d="M${x+28} 288 V316" stroke="${C.ln2}"/>`).join('')}
-         <text x="418" y="334" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">장치마다 통역사 하나씩</text>`,
-        418, 374, 'middle')}
+        `<rect class="hot__shape" x="66" y="240" width="150" height="124" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
+         ${[['디스크',82],['NIC',150]].map(([t,x]) => `
+           <rect x="${x}" y="262" width="52" height="22" rx="3" fill="${C.pan}" stroke="${C.cyanD}"/>
+           <text x="${x+26}" y="277" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.cyan}">${t}</text>
+           <path d="M${x+26} 284 V310" stroke="${C.ln2}"/>`).join('')}
+         <text x="141" y="330" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">장치마다 통역사</text>`,
+        141, 384, 'middle')}
+      ${hot('ipc', 'IPC',
+        `<rect class="hot__shape" x="226" y="240" width="150" height="124" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
+         <rect x="240" y="270" width="34" height="26" rx="3" fill="${C.pan}" stroke="${C.cyanD}"/>
+         <rect x="328" y="270" width="34" height="26" rx="3" fill="${C.pan}" stroke="${C.vioD}"/>
+         <rect x="278" y="276" width="46" height="14" rx="7" fill="#16301f" stroke="${C.grn}"/>
+         ${flow('M280 283 H322', C.grn, 2, 1.4, 1.8)}
+         <text x="301" y="330" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">파이프·시그널</text>`,
+        301, 384, 'middle')}
+      ${hot('boot', '부팅의 방',
+        `<rect class="hot__shape" x="386" y="240" width="150" height="124" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
+         <text x="461" y="290" text-anchor="middle" font-family="monospace" font-size="20" fill="${C.vio}">⏻</text>
+         <text x="461" y="330" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">커널의 탄생 · PID 1</text>`,
+        461, 384, 'middle')}
     `),
 
     /* ─── D4 스케줄러 ─── */
@@ -396,10 +408,12 @@
       <text x="307" y="100" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.dim}">경로 탐색</text>
       <text x="307" y="118" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">/home/a.txt</text>
       ${arrowR(362, 105, 406, C.cyan)}
-      <rect x="408" y="72" width="140" height="76" rx="6" fill="#221a2e" stroke="${C.vio}"/>
-      <text x="478" y="96" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.vio}">inode #482</text>
-      <text x="478" y="114" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">크기 4KB · rw-r--r--</text>
-      <text x="478" y="132" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">블록: 17, 18, 92</text>
+      ${hot('inode', '신분증의 속',
+        `<rect class="hot__shape" x="408" y="72" width="140" height="76" rx="6" fill="#221a2e" stroke="${C.vio}"/>
+         <text x="478" y="96" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.vio}">inode #482</text>
+         <text x="478" y="114" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">크기 4KB · rw-r--r--</text>
+         <text x="478" y="132" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">블록: 17, 18, 92</text>`,
+        478, 62, 'middle')}
       <path d="M478 148 V190" stroke="${C.ln2}" stroke-width="1.5"/>
       ${[['17',410],['18',458],['92',506]].map(([b,x]) => `
         <rect x="${x}" y="194" width="42" height="34" rx="3" fill="${C.pan}" stroke="${C.grn}"/>
@@ -572,6 +586,91 @@
         <text x="${x + 83}" y="312" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.dim}">${d1}</text>
         <text x="${x + 83}" y="330" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">${d2}</text>`).join('')}
       <text x="300" y="384" text-anchor="middle" class="s-label" fill="${C.fnt}">아래 미니랩에서 FIFO와 LRU의 폴트 수를 직접 겨뤄 보세요</text>
+    `),
+
+    /* ─── D4 IPC: 관과 초인종 ─── */
+    ipc: svg(`
+      ${lbl(40, 40, 'IPC · 고립된 우주들의 대화')}
+      <rect x="60" y="70" width="140" height="90" rx="8" fill="${C.pan2}" stroke="${C.cyan}"/>
+      <text x="130" y="108" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.cyan}">ls</text>
+      <text x="130" y="128" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">stdout(fd1) → 관으로</text>
+      <rect x="400" y="70" width="140" height="90" rx="8" fill="${C.pan2}" stroke="${C.vio}"/>
+      <text x="470" y="108" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.vio}">grep</text>
+      <text x="470" y="128" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">stdin(fd0) ← 관에서</text>
+      <rect x="200" y="100" width="200" height="28" rx="14" fill="#16301f" stroke="${C.grn}" stroke-width="1.5"/>
+      <text x="300" y="92" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.grn}">파이프 (커널 안의 버퍼)</text>
+      ${flow('M206 114 H394', C.grn, 4, 1.6, 2.5)}
+      <text x="300" y="150" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">둘은 서로의 존재를 모른다 — 그저 쓰고, 읽을 뿐</text>
+      <!-- 시그널 -->
+      <rect x="60" y="200" width="480" height="80" rx="8" fill="${C.pan2}" stroke="${C.ln2}"/>
+      <text x="90" y="228" font-family="monospace" font-size="9" fill="${C.warn}">시그널 — 프로세스에게 던지는 초인종:</text>
+      ${[['SIGINT', 'Ctrl+C — "멈춰줄래?"', 96], ['SIGTERM', 'kill — "정리하고 종료"', 250], ['SIGKILL', '거부 불가 즉사 💀', 404]].map(([t, d, x]) => `
+        <rect x="${x}" y="238" width="138" height="32" rx="4" fill="${C.pan}" stroke="${C.warn}" opacity=".85"/>
+        <text x="${x+69}" y="251" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.warn}">${t}</text>
+        <text x="${x+69}" y="264" text-anchor="middle" font-family="monospace" font-size="7" fill="${C.fnt}">${d}</text>`).join('')}
+      <!-- 다른 수단들 -->
+      <rect x="60" y="300" width="230" height="56" rx="6" fill="${C.pan2}" stroke="${C.ln2}"/>
+      <text x="175" y="324" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.dim}">공유 메모리 — 가장 빠름</text>
+      <text x="175" y="342" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.warn}">대신 락 필요 (동시성의 늪!)</text>
+      <rect x="310" y="300" width="230" height="56" rx="6" fill="${C.pan2}" stroke="${C.cyanD}"/>
+      <text x="425" y="324" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.dim}">소켓 — 네트워크 너머까지</text>
+      <text x="425" y="342" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.cyanD}">→ 3편 「회선 속으로」의 영역</text>
+      <text x="300" y="394" text-anchor="middle" class="s-label" fill="${C.fnt}">격리가 기본, 대화는 커널의 중개로 — 안전과 소통의 균형</text>
+    `),
+
+    /* ─── D4.3 inode · 페이지 캐시 ─── */
+    inode: svg(`
+      ${lbl(40, 40, 'INODE · 파일의 해부도')}
+      <rect x="56" y="64" width="160" height="200" rx="6" fill="#221a2e" stroke="${C.vio}" stroke-width="1.5"/>
+      <text x="136" y="88" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.vio}">inode #482</text>
+      ${[['크기 1.2MB', 104], ['소유자 hyenem', 122], ['권한 rw-r--r--', 140], ['수정 시각 …', 158]].map(([t, y]) => `
+        <text x="72" y="${y}" font-family="monospace" font-size="8" fill="${C.dim}">${t}</text>`).join('')}
+      <text x="72" y="186" font-family="monospace" font-size="8" fill="${C.cyan}">직접 포인터 ×12 ─┐</text>
+      <text x="72" y="208" font-family="monospace" font-size="8" fill="${C.grn}">단일 간접 ────┐ │</text>
+      <text x="72" y="230" font-family="monospace" font-size="8" fill="${C.warn}">이중 간접 ──┐ │ │</text>
+      <text x="72" y="252" font-family="monospace" font-size="7.5" fill="${C.fnt}">(이름은 없다! — 디렉터리 소관)</text>
+      <!-- 직접 블록 -->
+      ${[0,1,2].map(i => `<rect x="${250}" y="${70+i*34}" width="44" height="26" rx="3" fill="${C.pan}" stroke="${C.cyan}"/>
+        <text x="${272}" y="${87+i*34}" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.cyan}">B${17+i}</text>`).join('')}
+      <path d="M216 182 Q235 120 250 96" fill="none" stroke="${C.cyan}" stroke-width="1" opacity=".6"/>
+      <!-- 간접 블록 -->
+      <rect x="250" y="180" width="44" height="26" rx="3" fill="#16301f" stroke="${C.grn}"/>
+      <text x="272" y="197" text-anchor="middle" font-family="monospace" font-size="7" fill="${C.grn}">포인터들</text>
+      <path d="M216 204 H250" stroke="${C.grn}" stroke-width="1" opacity=".7"/>
+      ${[0,1].map(i => `<rect x="${320}" y="${168+i*34}" width="44" height="26" rx="3" fill="${C.pan}" stroke="${C.grn}" opacity=".8"/>
+        <path d="M294 193 Q307 ${181+i*34} 320 ${181+i*34}" fill="none" stroke="${C.grn}" stroke-width="1" opacity=".5"/>`).join('')}
+      <text x="342" y="240" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">트리가 깊을수록 큰 파일</text>
+      <!-- 페이지 캐시 -->
+      <rect x="60" y="290" width="480" height="70" rx="8" fill="#10262c" stroke="${C.cyan}" stroke-width="1.5"/>
+      <text x="300" y="314" text-anchor="middle" font-family="monospace" font-size="9.5" fill="${C.cyan}">페이지 캐시 (RAM) — 디스크의 그림자</text>
+      <text x="300" y="334" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.dim}">한 번 읽은 블록은 여기 남는다 → 두 번째 read()는 디스크에 안 간다</text>
+      <text x="300" y="350" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">"남는 RAM은 전부 캐시로" — free 명령의 available이 큰 이유</text>
+      ${flow('M272 264 Q272 280 290 292', C.cyan, 1, 1.8, 2)}
+      <text x="300" y="392" text-anchor="middle" class="s-label" fill="${C.fnt}">1편의 캐시 계층이 소프트웨어에서 반복된다 — 같은 문제, 같은 답</text>
+    `),
+
+    /* ─── D4 부팅: 커널의 기상 절차 ─── */
+    boot: svg(`
+      ${lbl(40, 40, 'KERNEL BOOT · 바통을 받은 다음')}
+      <rect x="60" y="60" width="180" height="40" rx="6" fill="${C.pan}" stroke="${C.cyanD}" stroke-dasharray="4 3"/>
+      <text x="150" y="85" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.cyanD}">부트로더 (1편의 마지막)</text>
+      ${flow('M150 100 V124', C.vio, 1, 1.2, 2.5)}
+      ${[['① 압축 해제 · 자기 점검', 126], ['② 하드웨어 탐지 → 드라이버 기상', 178], ['③ 스케줄러·메모리 관리 가동', 230], ['④ 루트 파일시스템 마운트', 282]].map(([t, y]) => `
+        <rect x="60" y="${y}" width="280" height="40" rx="5" fill="${C.pan2}" stroke="${C.vio}" opacity=".9"/>
+        <text x="200" y="${y+25}" text-anchor="middle" font-family="monospace" font-size="8.5" fill="${C.dim}">${t}</text>
+        <path d="M200 ${y+40} V${y+52}" stroke="${C.vioD}" stroke-width="1.5"/>`).join('')}
+      <rect x="60" y="334" width="280" height="48" rx="6" fill="#221a2e" stroke="${C.vio}" stroke-width="2"/>
+      <text x="200" y="354" text-anchor="middle" font-family="monospace" font-size="10" fill="${C.vio}">⑤ fork → PID 1 (init/systemd)</text>
+      <text x="200" y="372" text-anchor="middle" font-family="monospace" font-size="7.5" fill="${C.fnt}">최초의 프로세스 — 모든 것의 조상</text>
+      <!-- 가계도 -->
+      <path d="M340 358 H400" stroke="${C.grn}" stroke-width="1.5"/>
+      ${[['데몬들', 120], ['로그인', 200], ['여러분의 앱 ⦿', 280]].map(([t, y], i) => `
+        <rect x="404" y="${y+170}" width="150" height="36" rx="5" fill="${C.pan2}" stroke="${C.grn}" opacity="${.7+i*.15}"/>
+        <text x="479" y="${y+192}" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.grn}">${t}</text>
+        ${i<2?`<path d="M479 ${y+206} V${y+220}" stroke="${C.grn}" stroke-width="1" opacity=".5"/>`:''}`).join('')}
+      <text x="479" y="270" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">fork의 가계도</text>
+      <text x="479" y="84" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">루트 노드(프로세스)로</text>
+      <text x="479" y="98" text-anchor="middle" font-family="monospace" font-size="8" fill="${C.fnt}">돌아가면 — 한 바퀴 ⟳</text>
     `),
   };
 
