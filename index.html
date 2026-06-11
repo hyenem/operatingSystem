@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>커널 속으로 — 운영체제 딥다이브</title>
+  <meta name="description" content="실행 중인 프로세스에서 시작해 시스템 콜의 문을 지나 하드웨어 경계까지, 클릭으로 파고드는 운영체제 인터랙티브 학습." />
+
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <meta name="theme-color" content="#0a0d12" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="커널 속으로 — 운영체제 딥다이브" />
+  <meta property="og:description" content="앱에서 출발해 시스템 콜의 문을 지나 커널의 방들로 — 하드웨어 경계까지 내려가는 인터랙티브 운영체제 학습." />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- Fonts: 기술적 readout(IBM Plex Mono) + 한글 본문(IBM Plex Sans KR) + 깊이 라벨(Chakra Petch) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- 그레인 / 비네트 분위기 레이어 -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="app">
+    <!-- ── 상단 바: 워드마크 + 빵부스러기 ───────────────────── -->
+    <header class="topbar">
+      <div class="wordmark">
+        <span class="wordmark__glyph">⦿</span>
+        <span class="wordmark__text">커널 속으로<span class="wordmark__sub">DESCENT&nbsp;INTO&nbsp;THE&nbsp;KERNEL</span></span>
+      </div>
+      <nav class="breadcrumb" id="breadcrumb" aria-label="현재 위치"></nav>
+    </header>
+
+    <!-- ── 본문: 깊이게이지 | 스테이지 | 설명패널 ─────────────── -->
+    <main class="layout">
+
+      <!-- 왼쪽: 깊이 게이지 -->
+      <aside class="gauge" id="gauge" aria-label="깊이 게이지">
+        <div class="gauge__title">RING</div>
+        <div class="gauge__track" id="gaugeTrack">
+          <div class="gauge__line"></div>
+          <div class="gauge__marker" id="gaugeMarker">
+            <span class="gauge__marker-dot"></span>
+          </div>
+        </div>
+        <div class="gauge__readout" id="gaugeReadout">유저 공간</div>
+      </aside>
+
+      <!-- 가운데: 스테이지 -->
+      <section class="stage" id="stage" aria-label="탐험 무대">
+        <div class="stage__frame" id="stageFrame">
+          <!-- 동적 렌더링 -->
+        </div>
+        <div class="stage__hint" id="stageHint"></div>
+      </section>
+
+      <!-- 오른쪽: 설명 + 인라인 미니랩 -->
+      <aside class="panel" id="panel" aria-label="설명">
+        <div class="panel__scroll" id="panelScroll">
+          <!-- 동적 렌더링 -->
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- ── 하단 컨트롤 ──────────────────────────────────────── -->
+    <footer class="controls">
+      <button class="btn btn--back" id="btnBack" disabled>
+        <span class="btn__icon">←</span> 위로
+      </button>
+      <div class="controls__center" id="depthTag">L0</div>
+      <div class="controls__right">
+        <button class="btn btn--ghost" id="btnMap">🗺 지도</button>
+        <button class="btn btn--ghost" id="btnSettings" title="설정(준비 중)">⚙ 설정</button>
+        <button class="btn btn--home" id="btnHome">처음으로 ⌂</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- 인트로 가이드 (첫 방문 시) -->
+  <div class="intro" id="intro" hidden>
+    <div class="intro__card">
+      <div class="intro__glyph">⦿</div>
+      <h2 class="intro__title">커널 속으로</h2>
+      <p class="intro__lead">방금 더블클릭한 앱 — 그 <b>실행 중인 프로세스</b>에서 출발해, 시스템 콜의 문을 지나<br>커널의 방들을 거쳐 <b>하드웨어 경계</b>까지 내려가는 여정.</p>
+      <ul class="intro__tips">
+        <li><span>①</span> 도식 위의 <b>요소를 클릭</b>하면 그 안으로 줌인합니다</li>
+        <li><span>②</span> 왼쪽 <b>권한 게이지</b>가 유저 공간↔커널 어디쯤인지 보여줍니다</li>
+        <li><span>③</span> 설명 아래 <b>🧪 미니랩</b>에서 직접 만져보세요</li>
+      </ul>
+      <button class="intro__btn" id="introStart">탐험 시작 ↘</button>
+      <p class="intro__hint">언제든 좌측 상단 로고를 누르면 이 안내가 다시 열립니다</p>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/extras.js"></script>
+  <script src="js/book.js"></script>
+  <script src="js/scenes.js"></script>
+  <script src="js/labs.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
